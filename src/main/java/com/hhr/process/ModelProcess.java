@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
-
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -58,7 +57,7 @@ public class ModelProcess {
 	 * 指定 问题question 及 字典的txt模板 所在的根目录
 	 * 需增加问题模板训练集txt文件
 	 */
-	String rootDirPath = "D:/_HhrWorkSpace/Java/myHanLP/data";
+	String rootDirPath = "D:/_HhrWorkSpace/Java/SpringBoot-Neo4j-KBQA/myHanLP/data";
 
 	/**
 	 * 分类模板索引值
