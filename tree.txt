@@ -1,0 +1,122 @@
+卷 Work 的文件夹 PATH 列表
+卷序列号为 9208-3CCA
+D:.
+│  pom.xml
+│  tree.txt
+│  
+├─.idea
+│  │  .gitignore
+│  │  .name
+│  │  compiler.xml
+│  │  encodings.xml
+│  │  jarRepositories.xml
+│  │  misc.xml
+│  │  SpringBoot-Neo4j-KBQA.iml
+│  │  uiDesigner.xml
+│  │  workspace.xml
+│  │  
+│  └─inspectionProfiles
+│          Project_Default.xml
+│          
+├─opt
+│  └─spring-boot-web
+│      └─logs
+│              sys.log
+│              
+├─spark-warehouse
+├─src
+│  ├─main
+│  │  ├─java
+│  │  │  └─com
+│  │  │      └─hhr
+│  │  │          │  Application.java
+│  │  │          │  
+│  │  │          ├─controller
+│  │  │          │      QuestionController.java
+│  │  │          │      
+│  │  │          ├─node
+│  │  │          │      BaseEntity.java
+│  │  │          │      jd_entity.java
+│  │  │          │      
+│  │  │          ├─process
+│  │  │          │      ModelProcess.java
+│  │  │          │      
+│  │  │          ├─repository
+│  │  │          │      QRepository.java
+│  │  │          │      
+│  │  │          ├─result
+│  │  │          │      ResponseMessage.java
+│  │  │          │      ResponseResult.java
+│  │  │          │      ResultData.java
+│  │  │          │      
+│  │  │          └─service
+│  │  │              │  QuestionService.java
+│  │  │              │  
+│  │  │              └─impl
+│  │  │                      QuestionServiceImpl.java
+│  │  │                      
+│  │  ├─resources
+│  │  │  │  application.properties
+│  │  │  │  hanlp.properties
+│  │  │  │  logback-boot.xml
+│  │  │  │  
+│  │  │  └─templates
+│  │  │          index.html
+│  │  │          
+│  │  └─webapp
+│  │      └─WEB-INF
+│  │              web.xml
+│  │              
+│  └─test
+│      └─java
+│              BayesTest.java
+│              HanLPTest.java
+│              
+└─target
+    ├─classes
+    │  │  application.properties
+    │  │  hanlp.properties
+    │  │  logback-boot.xml
+    │  │  
+    │  ├─com
+    │  │  └─hhr
+    │  │      │  Application.class
+    │  │      │  
+    │  │      ├─controller
+    │  │      │      QuestionController.class
+    │  │      │      
+    │  │      ├─node
+    │  │      │      BaseEntity.class
+    │  │      │      jd_entity.class
+    │  │      │      
+    │  │      ├─process
+    │  │      │      ModelProcess.class
+    │  │      │      
+    │  │      ├─repository
+    │  │      │      QRepository.class
+    │  │      │      
+    │  │      ├─result
+    │  │      │      ResponseMessage.class
+    │  │      │      ResponseResult.class
+    │  │      │      ResultData.class
+    │  │      │      
+    │  │      └─service
+    │  │          │  QuestionService.class
+    │  │          │  
+    │  │          └─impl
+    │  │                  QuestionServiceImpl.class
+    │  │                  
+    │  ├─META-INF
+    │  │      SpringBoot-Neo4j-KBQA.kotlin_module
+    │  │      
+    │  └─templates
+    │          index.html
+    │          
+    ├─generated-sources
+    │  └─annotations
+    ├─generated-test-sources
+    │  └─test-annotations
+    └─test-classes
+            BayesTest.class
+            HanLPTest.class
+            
