@@ -1,5 +1,5 @@
 0:ntc n 有哪些
 1:att n 有哪些
 2:有哪些 cj vsc n
-3:noj 价格 是多少
+3:noj jg 是多少
 4:ntc vsc 哪种 家电
