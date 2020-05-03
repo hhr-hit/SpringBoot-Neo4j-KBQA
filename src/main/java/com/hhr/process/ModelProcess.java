@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
+import com.hhr.controller.QuestionController;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -26,6 +27,8 @@ import com.hankcs.hanlp.seg.common.Term;
  * 实现关键性语句还原，获得数据库查询参数
  */
 public class ModelProcess {
+
+	StringBuffer process = new StringBuffer(); //处理流程
 
 	/**
 	 * 读取人工构造的问题模板分类文件
@@ -102,8 +105,11 @@ public class ModelProcess {
 		System.out.println(" ");
 		System.out.println("系统已收到用户在前端提交的问句，开始分析该问句");
 		System.out.println(" ");
+
 		System.out.println("原始句子内容为：“" + queryString + "”"); //海尔的冰箱有哪些
 		System.out.println(" ");
+		process.append("原始句子内容为：“" + queryString + "”<br><br>");
+
 
 
 		/**
@@ -120,9 +126,13 @@ public class ModelProcess {
 		 * 哪些/ry
 		 */
 		System.out.println("========HanLP开始分词========");
+		process.append("========HanLP开始分词========<br>");
+
 		String abstr = queryAbstract(queryString); //分词结果
 		System.out.println("句子抽象化结果：" + abstr); // ntc 的 n 有 哪些
 		System.out.println(" ");
+		process.append("句子抽象化结果：" + abstr + "<br><br>");
+
 
 
 		/**
@@ -131,10 +141,17 @@ public class ModelProcess {
 		 */
 		//System.out.println(" ");
 		System.out.println("========开始匹配问题模板========");
+		process.append("========开始匹配问题模板========" + "<br>");
+
 		String strPatt = queryClassify(abstr);
+
 		System.out.println("句子套用模板结果：" + strPatt); // ntc n 有哪些
 		System.out.println("========问题模板匹配结束========");
 		System.out.println(" ");
+		process.append("句子套用模板结果：" + strPatt + "<br>"
+						+ "========问题模板匹配结束========" + "<br><br>");
+
+
 
 		/**
 		 * 模板还原成句子
@@ -144,6 +161,7 @@ public class ModelProcess {
 
 		System.out.println("原始句子替换成系统可识别的结果："+finalPattern);// 海尔 冰箱 有哪些
 		System.out.println(" ");
+		process.append("原始句子替换成系统可识别的结果："+finalPattern + "<br><br>");
 
 		ArrayList<String> resultList = new ArrayList<String>();
 		resultList.add(String.valueOf(modelIndex)); //列表0号位置 问题模板序号
@@ -152,8 +170,10 @@ public class ModelProcess {
 			resultList.add(word);
 
 		System.out.println("由问句分析，生成的最终查询集合：" + resultList);
+		process.append("由问句分析，生成的最终查询集合：" + resultList + "<br><br>");
 
-		return resultList; //模板序号 分词1 分词2 分词3 分词4
+		resultList.add(process.toString());
+		return resultList; //模板序号 分词1 分词2 分词3 ... 分词n 处理过程
 	}
 
 	/**
@@ -185,7 +205,9 @@ public class ModelProcess {
 			String word = term.word; //获取单词的部分，以用于存入抽象化结果和哈希表，比如 海尔
 			//System.out.println(word); //调试
 			String termStr = term.toString(); //整个输出，比如 海尔/ntc
+
 			System.out.println(termStr); //分词结果输出
+			process.append(termStr + "<br>");
 
 			if (termStr.contains("ntc")) { //ntc 品牌
 				abstractQuery += "ntc "; //存入 抽象化结果 字符串
@@ -216,10 +238,15 @@ public class ModelProcess {
 
 		System.out.println("========HanLP分词结束========");
 		System.out.println(" ");
+		process.append("========HanLP分词结束========" + "<br><br>");
+
 		System.out.println("关键字与其词性的map键值对哈希表 abstractMap 已生成");
 		System.out.println(" ");
+		process.append("关键字与其词性的map键值对哈希表已生成" + "<br><br>");
+
 		System.out.println("模板所需的词性替换、句子抽象化处理已完成");
 		System.out.println(" ");
+		process.append("模板所需的词性替换、句子抽象化处理已完成" + "<br><br>");
 
 		return abstractQuery;
 	}
@@ -259,6 +286,11 @@ public class ModelProcess {
 
 		System.out.println("========句子还原结束========");
 		System.out.println(" ");
+
+		process.append("========开始句子还原========" + "<br>"
+				+ "从abstractMap中获取词性集合" + "<br>"
+				+ "替换句子模板中的抽象词性为 具体问句中的单词" + "<br>"
+				+ "========句子还原结束========"  + "<br><br>");
 
 		return extendedQuery;
 	}
@@ -581,12 +613,16 @@ public class ModelProcess {
 		double[] testArray = sentenceToArrays(sentence);
 		System.out.println("用户问句——词向量生成完毕");
 		System.out.println("用户问句——调试输出——用户问句的向量：" + Arrays.toString(testArray));
+		process.append("用户问句——开始生成向量" + "<br>"
+						+ "用户问句——词向量生成完毕" + "<br>"
+						+ "用户问句——调试输出——用户问句的向量：" + Arrays.toString(testArray) + "<br>");
 
 		/**
 		 * 生成对应的稠密向量 v
 		 */
 		Vector v = Vectors.dense(testArray);
 		System.out.println("用户问句——生成的对应的稠密向量：" + v.toString());
+		process.append("用户问句——生成的对应的稠密向量：" + v.toString() + "<br>");
 
 		/**
 		 * 对数据进行预测predict
@@ -594,6 +630,8 @@ public class ModelProcess {
 		 * 根据词汇使用的频率推断出句子对应哪一个模板
 		 */
 		System.out.println("用户问句——贝叶斯分类器进行预测");
+		process.append("用户问句——贝叶斯分类器进行预测" + "<br>");
+
 		double index = nbModel.predict(v);
 		modelIndex = (int)index;
 		//System.out.println("预测匹配完成，模板序号为" + index);
@@ -604,12 +642,17 @@ public class ModelProcess {
 		 * 测试模板匹配准确率
 		 */
 		Vector vRes = nbModel.predictProbabilities(v);
-		System.out.println("问题模板分类为【0】的概率："+vRes.toArray()[0]);
-		System.out.println("问题模板分类为【1】的概率："+vRes.toArray()[1]);
-		System.out.println("问题模板分类为【2】的概率："+vRes.toArray()[2]);
-		System.out.println("问题模板分类为【3】的概率："+vRes.toArray()[3]);
 
+		System.out.println("问题模板分类为【0】的概率："+vRes.toArray()[0]);
+		process.append("问题模板分类为【0】的概率："+vRes.toArray()[0] + "<br>");
+		System.out.println("问题模板分类为【1】的概率："+vRes.toArray()[1]);
+		process.append("问题模板分类为【1】的概率："+vRes.toArray()[1] + "<br>");
+		System.out.println("问题模板分类为【2】的概率："+vRes.toArray()[2]);
+		process.append("问题模板分类为【2】的概率："+vRes.toArray()[2] + "<br>");
+		System.out.println("问题模板分类为【3】的概率："+vRes.toArray()[3]);
+		process.append("问题模板分类为【3】的概率："+vRes.toArray()[3] + "<br>");
 		System.out.println("朴素贝叶斯预测匹配完成，模板序号为 " + index);
+		process.append("朴素贝叶斯预测匹配完成，模板序号为 " + index + "<br>");
 
 		return questionsPattern.get(index);
 	}

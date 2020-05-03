@@ -25,6 +25,8 @@ import com.hankcs.hanlp.dictionary.CustomDictionary;
 @Primary
 public class QuestionServiceImpl implements QuestionService {
 
+	StringBuffer process = new StringBuffer(); //处理流程
+
 	/**
 	 * hanlp使用的字典的路径
 	 */
@@ -74,7 +76,7 @@ public class QuestionServiceImpl implements QuestionService {
 	 * @throws Exception
 	 */
 	@Override
-	public String answer(String question) throws Exception {
+	public List<String> answer(String question) throws Exception {
 
 		/**
 		 * 生成可供使用的HanLP分词器与贝叶斯分类器
@@ -140,10 +142,17 @@ public class QuestionServiceImpl implements QuestionService {
 		 * 提取问题分类序号
 		 * 提取分词，作为参数调用QRepository方法，查询数据库
 		 */
-		ArrayList<String> reStrings = queryProcess.analyQuery(question); //问句分析
+		ArrayList<String> reStrings = queryProcess.analyQuery(question); //问句分析，得到查询集合
+
+		process.append(reStrings.get(reStrings.size() - 1)); //提取处理流程，保存
+		reStrings.remove(reStrings.size() - 1); //删除处理流程
 
 		int modelIndex = Integer.valueOf(reStrings.get(0)); // 0号位 index
+
+		System.out.println(" ");
 		System.out.println("从查询集合中提取问题分类序号：" + modelIndex);
+		System.out.println(" ");
+		process.append("从查询集合中提取问题分类序号：" + modelIndex + "<br><br>");
 
 		String answer = null;
 		String name = "";
@@ -162,8 +171,13 @@ public class QuestionServiceImpl implements QuestionService {
 				 */
 				name = reStrings.get(1); //获取ntc
 				type = reStrings.get(2); //获取n
+
 				System.out.println("从查询集合中获取参数：" + name + " " + type);
+				System.out.println(" ");
 				System.out.println("查询Neo4j数据库：bolt://localhost:7687");
+				process.append("从查询集合中获取参数：" + name + " " + type + "<br><br>"
+								+ "查询Neo4j数据库：bolt://localhost:7687" + "<br><br>");
+
 				name = ".*" + name + ".*"; //模糊查询
 				type = ".*" + type + ".*";
 				List<String> jiadians0 = qRepository.getJiandianByPinpai(name, type); //名字
@@ -187,8 +201,12 @@ public class QuestionServiceImpl implements QuestionService {
 				 */
 				att = reStrings.get(1); //获取att
 				type = reStrings.get(2); //获取n
+
 				System.out.println("从查询集合中获取参数：" + att + " " + type);
+				System.out.println(" ");
 				System.out.println("查询Neo4j数据库：bolt://localhost:7687");
+				process.append("从查询集合中获取参数：" + att + " " + type + "<br><br>"
+						+ "查询Neo4j数据库：bolt://localhost:7687" + "<br><br>");
 				att = ".*" + att + ".*"; //模糊查询
 				type = ".*" + type + ".*";
 				//String tq = ".*" + att + ".*" + "&" + ".*" + type + ".*";
@@ -212,8 +230,13 @@ public class QuestionServiceImpl implements QuestionService {
 				 * 2 对应问题模板2 == 有哪些 cj(厂家) vsc(动词，如制造) n(家电类型名称，如冰箱)
 				 */
 				type = reStrings.get(4); //获取n
+
 				System.out.println("从查询集合中获取参数：" + type);
+				System.out.println(" ");
 				System.out.println("查询Neo4j数据库：bolt://localhost:7687");
+				process.append("从查询集合中获取参数：" + type + "<br><br>"
+						+ "查询Neo4j数据库：bolt://localhost:7687" + "<br><br>");
+
 				type = ".*" + type + ".*"; //模糊查询
 				List<String> pinpais0 = qRepository.getPinpaiByType(type);
 				if (pinpais0.size() == 0) {
@@ -239,8 +262,12 @@ public class QuestionServiceImpl implements QuestionService {
 					}
 				}
 				name = sb.toString(); //真正的名称
-				System.out.println("最终的名称参数：" + name);
+				System.out.println(name);
+				System.out.println(" ");
 				System.out.println("查询Neo4j数据库：bolt://localhost:7687");
+				process.append("处理家电名称，拼接为：<br>" + name + "<br><br>"
+						+ "查询Neo4j数据库：bolt://localhost:7687" + "<br><br>");
+
 				//System.out.println(name);
 				//name = reStrings.get(1); //获取noj
 				name = ".*" + name + ".*"; //模糊查询
@@ -267,17 +294,20 @@ public class QuestionServiceImpl implements QuestionService {
 		System.out.println(" ");
 		System.out.println("查询结束，结果为：");
 		System.out.println(answer);
+		process.append("查询结束，结果为：" + "<br>" + answer + "<br><br>"); //处理结束
 
 		/**
 		 * 生成答案
 		 */
 		//System.out.println("根据结果生成答案：" + answer);
-
+		List<String> res = new ArrayList<String>();
 		if (answer != null && !answer.equals("") && !answer.equals("\\N")) {
-			return answer;
+			res.add(answer); //得到答案
 		} else {
-			return "sorry,我没有找到你要的答案";
+			res.add("sorry,我没有找到你要的答案");
 		}
+		res.add(process.toString()); //加入处理过程
+		return res; //答案 //处理过程
 	}
 
 

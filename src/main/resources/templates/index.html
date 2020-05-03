@@ -96,57 +96,66 @@ position: fixed;
 <script type="text/javascript">
 	window.onload = function() {
 
-		var input = document.getElementById('msg_input'); //查找缓存
+		/**
+		 * 点击按钮发送
+		 */
+		var input = document.getElementById('msg_input'); //查找缓存，获取输入
 		document.getElementById('sendbtn').onclick = function() {
-			sendMsg();
+			sendMsg(); //点击按钮，发送消息
 		}
 
 		/**
-		 * enter键 发送
-		 * @param event
+		 * 按enter键发送
 		 */
 		document.onkeypress = function(event) {
 			var e = event || window.event;
 			var keycode = e.keyCode || e.which;
-			console.log(e)
-			if (keycode == 13) {//按下enter键
-				sendMsg()
+			console.log(e); //F12输出
+			if (keycode == 13) {//按下enter键，发送消息
+				sendMsg();
 			}
 		}
 
 		/**
-		 * 消息传递方法
+		 * 消息发送与界面显示
 		 */
 		function sendMsg() {
-			var input = document.getElementById('msg_input'); //查找缓存
-			var ul = document.getElementById('content');
+			var input = document.getElementById('msg_input'); //查找缓存，获取输入
+			var ul = document.getElementById('content'); //获取容器
 
-			var newLi = document.createElement('li');
-			newLi.innerHTML = input.value;
+			var newLi = document.createElement('li'); //创建新的对话气泡-用户
+			newLi.innerHTML = input.value; //显示
 			newLi.className = 'msgContent right';
-			ul.appendChild(newLi);
+			ul.appendChild(newLi); //加入容器中
 
 			var div = document.createElement('div');
 			div.style = 'clear:both';
-			ul.appendChild(div);
+			ul.appendChild(div); //空白分割
 
-			/**
-			 * ajax方式给后端传递问句
-			 */
+			//ajax方式，发送问句
 			ajax({
 				url : '/rest/hhr/question/query?question='+ input.value,
 				success : function(res) {				
 					console.log(res);
-					var newLi = document.createElement('li');
-					newLi.innerHTML = res;
-					newLi.className = 'msgContent left';
-					ul.appendChild(newLi);
 
-					var div = document.createElement('div');
-					div.style = 'clear:both';
-					ul.appendChild(div);
-					input.value = '';
+					var obj = eval('(' + res + ')');
+					//obj = JSON.parse(json_str);
+					//obj = jQuery.parseJSON(json_str);
+
+					var newLi = document.createElement('li'); //新建一行
+					newLi.innerHTML = obj.answer;
+					newLi.className = 'msgContent left';
+					ul.appendChild(newLi); //加入容器中
+
+					var div = document.createElement('div'); //新建一个对话气泡-系统回复
+					div.style = 'clear:both'; //空白分割
+					ul.appendChild(div); //加入容器中
+					input.value = ''; //重置输入框
 					newLi.scrollIntoView(); //将元素滚动到可见位置
+
+					//处理流程输出
+					var pro1 = "后端处理流程输出:<br>========开始加载问题模板========<br>模板文件：D:/_HhrWorkSpace/Java/SpringBoot-Neo4j-KBQA/myHanLP/data/question/question_classification.txt<br>按行读入文件，以 : 分割<br>构造 模板-序号 的哈希表 questionsPattern<br>========问题模板加载完毕========<br> <br>========开始加载词汇表文件========<br>词汇表位置：D:/_HhrWorkSpace/Java/SpringBoot-Neo4j-KBQA/myHanLP/data/question/vocabulary.txt<br>========词汇表文件加载完毕========<br> <br>========开始构造单词-序号 哈希表========<br>以 : 分割读取的文件字符数据流<br>========单词-序号 哈希表构造完毕========<br> <br>========开始加载问题训练集========<br>加载训练集0：某品牌的某类型家电<br>调试输出——问题模板0对应的向量：<br>[1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]<br>[0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]<br>[0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]<br>[0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]<br>[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]<br>[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]<br>[1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]<br>加载训练集1：某种参数的某类型家电<br>调试输出——问题模板1对应的向量：<br>[1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]<br>[1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]<br>[0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]<br>[0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]<br>[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]<br>[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]<br>[1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0]<br>加载训练集2：有哪些厂商生产某类型家电<br>调试输出——问题模板2对应的向量：<br>[1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]<br>[1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]<br>[1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]<br>[1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0]<br>[1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]<br>加载训练集3：某个家电的价格<br>调试输出——问题模板3对应的向量：<br>[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]<br>[0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]<br>[0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]<br>[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]<br>[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]<br>加载训练集4：某品牌有哪些家电种类<br>========问题训练集加载完毕========<br> <br>========开始朴素贝叶斯分类训练========<br>转换训练集为RDD——弹性分布式数据集<br>Spark-NaiveBayes生成训练器，开始训练<br>========朴素贝叶斯分类训练结束========<br> <br>HanLP分词字典根目录为：D:/_HhrWorkSpace/Java/SpringBoot-Neo4j-KBQA/myHanLP/data/dictionary<br> <br>========用户自定义扩展词库开始加载========<br>加载名称字典，设置词性noj，频率0<br>加载动词字典，设置词性vsc，频率0<br>加载厂家字典，设置词性cj，频率0<br>加载参数字典，设置词性att，频率0<br>加载店铺字典，设置词性dp，频率0<br>加载品牌字典，设置词性ntc，频率0<br>加载家电种类字典，设置词性n，频率0<br>========用户自定义字典加载完毕========<br> <br>系统已收到用户在前端提交的问句，开始分析该问句<br> <br>";
+					document.getElementById("process").innerHTML = pro1 + obj.process;
 				}
 			})
 
@@ -156,19 +165,20 @@ position: fixed;
 
 	}
 
+
 	/**
-	 * 可手动修改
-	 * @param obj
+	 * ajax
+	 * XMLHTTP通讯方式
 	 */
 	function ajax(obj) {
 		var xhr = null;
 		if (window.ActiveXObject) {
-			xhr = new ActiveXObject('Microsoft.XMLHTTP')
+			xhr = new ActiveXObject('Microsoft.XMLHTTP');
 		} else {
 			xhr = new XMLHttpRequest();
 		}
 
-		//打开与服务器的连接
+		//打开与服务器的连接 //按需添加http头
 		if (obj.method) {
 			xhr.open(obj.method, obj.url, true);
 		} else {
@@ -177,43 +187,50 @@ position: fixed;
 		xhr.setRequestHeader("Content-Type",
 				"application/x-www-form-urlencoded");
 		xhr.setRequestHeader("Authorization",
-				"APPCODE 3e9dfb924f464e9593a95f9d2bbf4348")
+				"APPCODE 3e9dfb924f464e9593a95f9d2bbf4348");
 
+		//通信状态监视
 		xhr.onreadystatechange = function() {
-
 			if (xhr.readyState == 4) {
 				//数据接收完毕
 				if (xhr.status == 200) {
-					//console.log('请求成功',xhr.responseText)
+					console.log('请求成功',xhr.responseText);
 					if (obj.success) {
-						obj.success(xhr.responseText)
+						obj.success(xhr.responseText); //返回答案res
 					}
-
 				} else {
-					//console.log(xhr.status,'请求出错')
+					console.log(xhr.status,'请求出错')
 					if (obj.failure) {
 						obj.failure('请求失败')
 					}
 				}
 			}
 		}
+
 		if (obj.method == undefined || obj.method.toLowerCase() == 'get') {
 			xhr.send(null);
 		} else {
 			xhr.send(obj.params);
-
 		}
 	}
 </script>
 
 </head>
 <body>
- 	<canvas id="canvas" width="1293" height="717"></canvas>
+	<canvas id="canvas" width="1293" height="717"></canvas>
+
+    <div style="position:absolute;background-color:transparent;height:680px;width:465px;" id="all">
+    	<div style="float:left;background-color:transparent;height:680px;width:15px;" id="kong"></div>
+    	<div id="process" style="float:right;background-color:white;height:680px;width:450px;overflow-y:scroll;font-size:16px">
+			后端处理流程输出:
+		</div>
+    </div>
+
 	<div id="main" class="main">
 		<ul id="content" class="content">
 			<li class="msgContent left">你好，自动问答系统为您服务，我是小h，你有什么家电售卖方面的问题可以问我哦</li>
             <li class="msgContent left">（目前构建知识图谱的原始数据来源于京东）</li>
-			<div style="clear: both"></div>		
+			<div style="clear: both"></div>
 		</ul>
 		<textarea id="msg_input" class="msgInput"></textarea>
 		<button id="sendbtn" class="sendbtn">提问</button>
