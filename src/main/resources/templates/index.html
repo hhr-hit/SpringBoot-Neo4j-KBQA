@@ -27,11 +27,26 @@
 	margin: 10px auto;
 }
 
+.cqlInput {
+	display: block;
+	width: 280px;
+	height: 90px;
+	margin: 10px auto;
+}
+
 .sendbtn {
 	position: absolute;
 	width: 100px;
 	height: 29px;
 	bottom: 5px;
+	right: 10px;
+}
+
+.cqlbtn {
+	position: absolute;
+	width: 100px;
+	height: 29px;
+	bottom: 305px;
 	right: 10px;
 }
 
@@ -97,6 +112,34 @@ position: fixed;
 	window.onload = function() {
 
 		/**
+		 * 查询按钮
+		 * 自助查询数据库
+		 */
+		document.getElementById('cqlbtn').onclick = function() {
+			cqlMsg(); //点击按钮，发送消息
+		}
+
+		/**
+		 * 查询按钮
+		 * 消息发送与界面显示
+		 */
+		function cqlMsg() {
+			var input = document.getElementById('cql_input'); //查找缓存，获取输入
+			var result = document.getElementById('result'); //结果区域
+			//ajax方式，发送问句
+			ajax({
+				url : '/rest/hhr/question/cql?cypher='+ input.value,
+				success : function(res) {
+					console.log(res);
+					//结果输出
+					document.getElementById("result").innerHTML = "数据库查询结果：<br>" + res;
+				}
+			})
+			//input.value = '';
+		}
+
+		/**
+		 * 提交按钮
 		 * 点击按钮发送
 		 */
 		var input = document.getElementById('msg_input'); //查找缓存，获取输入
@@ -105,6 +148,7 @@ position: fixed;
 		}
 
 		/**
+		 * 提交按钮
 		 * 按enter键发送
 		 */
 		document.onkeypress = function(event) {
@@ -117,6 +161,7 @@ position: fixed;
 		}
 
 		/**
+		 * 提交按钮
 		 * 消息发送与界面显示
 		 */
 		function sendMsg() {
@@ -219,10 +264,10 @@ position: fixed;
 <body>
 	<canvas id="canvas" width="1293" height="717"></canvas>
 
-    <div style="position:absolute;background-color:transparent;height:680px;width:465px;" id="all">
+    <div style="position:absolute;background-color:transparent;height:700px;width:500px;" id="all">
     	<div style="float:left;background-color:transparent;height:680px;width:15px;" id="kong"></div>
-    	<div id="process" style="float:right;background-color:white;height:680px;width:450px;overflow-y:scroll;font-size:16px">
-			后端处理流程输出:
+		<div id="process" style="color:white;border:1px solid steelblue;float:left;background-color:transparent;height:680px;width:450px;overflow-y:scroll;font-size:16px">
+				KBQA-后端处理流程输出:
 		</div>
     </div>
 
@@ -235,6 +280,18 @@ position: fixed;
 		<textarea id="msg_input" class="msgInput"></textarea>
 		<button id="sendbtn" class="sendbtn">提问</button>
 	</div>
+
+	<div style="position:absolute;left:1100px;top:20px;background-color:transparent;height:468px;width:300px;" id="thecql">
+		<div id="cql" style="color:white;border:1px solid steelblue;float:left;background-color:transparent;height:468px;width:300px;font-size:16px">
+			<div style="font-size: 16px">输入Cypher语句，查询Neo4j数据库：</div>
+			<textarea id="cql_input" class="cqlInput"></textarea>
+			<button id="cqlbtn" class="cqlbtn">查询</button>
+			<div id="result" style="position:absolute;bottom:5px;margin:10px;color:white;border:1px solid steelblue;float:left;background-color:transparent;height:280px;width:280px;overflow-y:scroll;font-size:16px">
+				数据库查询结果：<br>
+			</div>
+		</div>
+	</div>
+
 </body>
 
 <script type="text/javascript">
