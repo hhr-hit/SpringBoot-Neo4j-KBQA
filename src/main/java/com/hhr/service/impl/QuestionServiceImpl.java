@@ -193,6 +193,12 @@ public class QuestionServiceImpl implements QuestionService {
 //					}
 //					answer = jiadians000.toString().replace("[", "").replace("]", "");
 					answer = jiadians0.toString().replace("[", "").replace("]", "");
+					StringBuilder sb = new StringBuilder();
+					for(String x:jiadians0){
+						sb.append(x);
+						sb.append("<br>");
+					}
+					answer = sb.toString();
 				}
 				break;
 			case 1:

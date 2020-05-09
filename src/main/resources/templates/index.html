@@ -34,12 +34,36 @@
 	margin: 10px auto;
 }
 
+
+.neobtn {
+	position: absolute;
+	width: 100px;
+	height: 29px;
+	bottom: 5px;
+	left: 10px;
+	font-size: 18px;
+	background-color: #4CAF50;
+}
+
+.historybtn {
+	position: absolute;
+	width: 100px;
+	height: 29px;
+	bottom: 5px;
+	left: 165px;
+	font-size: 18px;
+	background-color: #008CBA;
+}
+
 .sendbtn {
 	position: absolute;
 	width: 100px;
 	height: 29px;
 	bottom: 5px;
 	right: 10px;
+	font-size: 18px;
+	background-color: #555555;
+	color: white;
 }
 
 .cqlbtn {
@@ -48,6 +72,9 @@
 	height: 29px;
 	bottom: 305px;
 	right: 10px;
+	font-size: 18px;
+	background-color: #555555;
+	color: white;
 }
 
 .content {
@@ -67,6 +94,7 @@
 	margin: 5px;
 	padding: 3px;
 	border-radius: 5px;
+	font-size: 15px;
 }
 
 .content .left {
@@ -112,6 +140,75 @@ position: fixed;
 	window.onload = function() {
 
 		/**
+		 * 启动时，先访问后台，提前加载字典和模板
+		 * 不算入问答历史
+		 */
+		ajax({
+			url : '/rest/hhr/question/onload',
+			success : function(res) {
+				console.log(res);
+			}
+		})
+
+		/**
+		 * 查看历史按钮
+		 */
+		document.getElementById('historybtn').onclick = function() {
+			historyMsg(); //点击按钮，发送消息
+		}
+
+		/**
+		 * 查看历史按钮
+		 */
+		function historyMsg() {
+			var ul = document.getElementById('content'); //获取容器
+			var newLi = document.createElement('li'); //创建新的对话气泡-系统
+			newLi.innerHTML = "您的问答历史如下"; //显示
+			newLi.className = 'msgContent left';
+			ul.appendChild(newLi); //加入容器中
+			var div = document.createElement('div');//空白分割
+			div.style = 'clear:both';
+			ul.appendChild(div); //空白分割
+			//ajax方式，访问后台
+			ajax({
+				url : '/rest/hhr/question/history',
+				success : function(res) {
+					console.log(res);
+					var newLi = document.createElement('li'); //新建一行
+					newLi.innerHTML = res;
+					newLi.className = 'msgContent left';
+					ul.appendChild(newLi); //加入容器中
+					var div = document.createElement('div'); //新建一个对话气泡-系统回复
+					div.style = 'clear:both'; //空白分割
+					ul.appendChild(div); //加入容器中
+					input.value = ''; //重置输入框
+					newLi.scrollIntoView(); //将元素滚动到可见位置
+				}
+			})
+			newLi.scrollIntoView(); //将元素滚动到可见位置
+		}
+
+		/**
+		 * 生成图谱按钮
+		 */
+		document.getElementById('neobtn').onclick = function() {
+			neoMsg(); //点击按钮，发送消息
+		}
+
+		/**
+		 * 生成图谱按钮
+		 */
+		function neoMsg() {
+			//ajax方式，访问后端
+			ajax({
+				url : '/rest/hhr/question/neo',
+				success : function(res) {
+					console.log(res);
+				}
+			})
+		}
+
+		/**
 		 * 查询按钮
 		 * 自助查询数据库
 		 */
@@ -126,7 +223,7 @@ position: fixed;
 		function cqlMsg() {
 			var input = document.getElementById('cql_input'); //查找缓存，获取输入
 			var result = document.getElementById('result'); //结果区域
-			//ajax方式，发送问句
+			//ajax方式，发送查询语句
 			ajax({
 				url : '/rest/hhr/question/cql?cypher='+ input.value,
 				success : function(res) {
@@ -273,11 +370,17 @@ position: fixed;
 
 	<div id="main" class="main">
 		<ul id="content" class="content">
-			<li class="msgContent left">你好，自动问答系统为您服务，我是小h，你有什么家电售卖方面的问题可以问我哦</li>
-            <li class="msgContent left">（目前构建知识图谱的原始数据来源于京东）</li>
+			<li class="msgContent left">
+				您好，自动问答系统为您服务，你有什么家电销售方面的问题可以问我（目前本系统构建知识图谱的原始数据来源于京东）
+			</li>
+			<li class="msgContent left">
+				根据您的问答历史记录，为您推荐以下问题：<br>海尔的冰箱有哪些？
+			</li>
 			<div style="clear: both"></div>
 		</ul>
 		<textarea id="msg_input" class="msgInput"></textarea>
+		<button id="neobtn" class="neobtn">生成图谱</button>
+		<button id="historybtn" class="historybtn">查看历史</button>
 		<button id="sendbtn" class="sendbtn">提问</button>
 	</div>
 

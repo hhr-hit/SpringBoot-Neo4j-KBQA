@@ -1,10 +1,6 @@
 package com.hhr.process;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import com.hhr.controller.QuestionController;
 import org.apache.spark.SparkConf;
@@ -110,6 +106,30 @@ public class ModelProcess {
 		System.out.println(" ");
 		process.append("原始句子内容为：“" + queryString + "”<br><br>");
 
+		/**
+		 * 将queryString存至txt文件新的一行
+		 */
+		if(queryString != "预加载"){
+			try {
+				File file = new File("D:\\_HhrWorkSpace\\Java\\SpringBoot-Neo4j-KBQA\\history.txt");
+				if(!file.exists()) {
+					file.createNewFile(); // 创建新文件,有同名的文件的话直接覆盖
+				}
+				FileOutputStream fos = new FileOutputStream(file,true);
+				OutputStreamWriter osw = new OutputStreamWriter(fos);
+				BufferedWriter bw = new BufferedWriter(osw);
+				bw.newLine(); //换行
+				bw.write(queryString); //存储
+				bw.flush();
+				bw.close();
+				osw.close();
+				fos.close();
+			}catch (FileNotFoundException e1) {
+				e1.printStackTrace();
+			} catch (IOException e2) {
+				e2.printStackTrace();
+			}
+		}
 
 
 		/**
