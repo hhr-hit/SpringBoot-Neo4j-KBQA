@@ -40,7 +40,7 @@ public interface QRepository extends Neo4jRepository<jd_entity,Long> {
 //    List<String> getJiandianpByAtt(@Param("att") String att, @Param("type") String type);
 
     /**
-     * 2 对应问题模板2   有哪些 cj(如厂家) vsc(如生产) n(家电类型名称，如冰箱)
+     * 2 对应问题模板2   有哪些 cj(如厂家) vsc n(家电类型名称，如冰箱)
      * @param type 家电类型名称
      * @return 返回品牌(厂家)名称列表
      */
@@ -48,7 +48,7 @@ public interface QRepository extends Neo4jRepository<jd_entity,Long> {
     List<String> getPinpaiByType(@Param("type") String type);
 
     /**
-     * 3 对应问题模板3   noj(家电具体名称，如某某某某冰箱) 价格 是多少
+     * 3 对应问题模板3   noj(家电具体名称，如某某某某冰箱) jg 是多少
      * @param name 家电类型名称
      * @return 返回价格
      */
@@ -56,10 +56,29 @@ public interface QRepository extends Neo4jRepository<jd_entity,Long> {
     Double getPriceByName(@Param("name") String name);
 
     /**
-     * 4 对应问题模板4   ntc vsc 哪种家电
-     * @param type 家电类型名称
-     * @return 返回家电名称列表
+     * 4 对应问题模板4   ntc vsc 哪种 家电
+     * @param ntc 品牌名称
+     * @return 返回家电名称列表，需要再次处理
      */
+    @Query("match(m)-[r:品牌]->(n) where n.name=~{ntc} return m.name")
+    List<String> getAllnByNtc(@Param("ntc") String ntc);
+
+    /**
+     * 5 对应问题模板5   noj 所有参数
+     * @param noj 家电名称
+     * @return 返回参数键值对列表
+     */
+    @Query("match(m)-[r]->(n) where m.name=~{noj} return r.name + \"：\" + n.name")
+    List<String> getAllByNoj(@Param("noj") String noj);
+
+    /**
+     * 6 对应问题模板6   noj mq 是多少
+     * @param noj 家电名称
+     * @param mq 某参数名
+     * @return 返回参数的值
+     */
+    @Query("match(m)-[r]->(n) where m.name=~{noj} and r.name=~{mq} return n.name")
+    String getMcsByNoj(@Param("noj") String noj, @Param("mq") String mq);
 
 
 }

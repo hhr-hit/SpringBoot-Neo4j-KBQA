@@ -250,8 +250,10 @@ public class ModelProcess {
 			} else if (termStr.contains("vsc")) { //vsc 动词
 				abstractQuery += "vsc ";
 				abstractMap.put("vsc", word);
-			}
-			else {
+			} else if (termStr.contains("mq")) { //mq 某参数
+				abstractQuery += "mq ";
+				abstractMap.put("mq", word);
+			} else {
 				abstractQuery += word + " ";
 			}
 		}
@@ -486,7 +488,7 @@ public class ModelProcess {
 
 
 		/**
-		 * 海尔的冰箱有哪些
+		 * 0 海尔的冰箱有哪些
 		 */
 		System.out.println("加载训练集0：某品牌的某类型家电");
 		String pinpaiJiadian = loadFile("question/【0】某品牌的某类型家电.txt");
@@ -500,7 +502,7 @@ public class ModelProcess {
 		}
 
 		/**
-		 * 风冷冰箱有哪些
+		 * 1 使用风冷制冷的冰箱有哪些
 		 */
 		System.out.println("加载训练集1：某种参数的某类型家电");
 		String attJiadian = loadFile("question/【1】某种参数的某类型家电.txt");
@@ -514,7 +516,7 @@ public class ModelProcess {
 		}
 
 		/**
-		 * 有哪些厂家生产冰箱
+		 * 2 有哪些厂家生产冰箱
 		 */
 		System.out.println("加载训练集2：有哪些厂商生产某类型家电");
 		String jiadianPinpai = loadFile("question/【2】有哪些厂商生产某类型家电.txt");
@@ -528,7 +530,7 @@ public class ModelProcess {
 		}
 
 		/**
-		 *  ...的价格
+		 * 3 某冰箱的价格
 		 */
 		System.out.println("加载训练集3：某个家电的价格");
 		String priceJiadian = loadFile("question/【3】某个家电的价格.txt");
@@ -542,13 +544,51 @@ public class ModelProcess {
 		}
 
 		/**
-		 *  某品牌生产哪种家电，有哪种家电，某品牌有哪些家电种类
+		 * 4 某品牌生产哪种家电
 		 */
 		System.out.println("加载训练集4：某品牌有哪些家电种类");
+		String nNtc = loadFile("question/【4】某品牌生产哪些种类的家电.txt");
+		sentences = nNtc.split("`"); //根据自定义换行标记分割
+		System.out.println("调试输出——问题模板4对应的向量：");
+		for (String sentence : sentences) {
+			double[] array = sentenceToArrays(sentence);
+			System.out.println(Arrays.toString(array));
+			LabeledPoint train_one = new LabeledPoint(4.0, Vectors.dense(array)); //index
+			train_list.add(train_one);
+		}
+
+		/**
+		 * 5 某冰箱的所有参数
+		 */
+		System.out.println("加载训练集5：某个家电的所有参数");
+		String allNoj = loadFile("question/【5】某个家电的所有参数.txt");
+		sentences = allNoj.split("`"); //根据自定义换行标记分割
+		System.out.println("调试输出——问题模板5对应的向量：");
+		for (String sentence : sentences) {
+			double[] array = sentenceToArrays(sentence);
+			System.out.println(Arrays.toString(array));
+			LabeledPoint train_one = new LabeledPoint(5.0, Vectors.dense(array)); //index
+			train_list.add(train_one);
+		}
+
+		/**
+		 * 6 某冰箱的某个参数
+		 */
+		System.out.println("加载训练集6：某个家电的某个参数");
+		String mqNoj = loadFile("question/【6】某个家电的某个参数.txt");
+		sentences = mqNoj.split("`"); //根据自定义换行标记分割
+		System.out.println("调试输出——问题模板6对应的向量：");
+		for (String sentence : sentences) {
+			double[] array = sentenceToArrays(sentence);
+			System.out.println(Arrays.toString(array));
+			LabeledPoint train_one = new LabeledPoint(6.0, Vectors.dense(array)); //index
+			train_list.add(train_one);
+		}
 
 
 		System.out.println("========问题训练集加载完毕========");
 		System.out.println(" ");
+
 
 		/**
 		 * SPARK的核心是RDD(弹性分布式数据集)
@@ -671,6 +711,13 @@ public class ModelProcess {
 		process.append("问题模板分类为【2】的概率："+vRes.toArray()[2] + "<br>");
 		System.out.println("问题模板分类为【3】的概率："+vRes.toArray()[3]);
 		process.append("问题模板分类为【3】的概率："+vRes.toArray()[3] + "<br>");
+		System.out.println("问题模板分类为【4】的概率："+vRes.toArray()[4]);
+		process.append("问题模板分类为【4】的概率："+vRes.toArray()[4] + "<br>");
+		System.out.println("问题模板分类为【5】的概率："+vRes.toArray()[5]);
+		process.append("问题模板分类为【5】的概率："+vRes.toArray()[5] + "<br>");
+		System.out.println("问题模板分类为【6】的概率："+vRes.toArray()[6]);
+		process.append("问题模板分类为【6】的概率："+vRes.toArray()[6] + "<br>");
+
 		System.out.println("朴素贝叶斯预测匹配完成，模板序号为 " + index);
 		process.append("朴素贝叶斯预测匹配完成，模板序号为 " + index + "<br>");
 

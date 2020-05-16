@@ -2,4 +2,6 @@
 1:att n 有哪些
 2:有哪些 cj vsc n
 3:noj jg 是多少
-4:ntc vsc 哪种 家电
+4:ntc vsc 哪些种类的家电
+5:noj 所有参数
+6:noj mq 是多少

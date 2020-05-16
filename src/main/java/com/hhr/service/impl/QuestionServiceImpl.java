@@ -7,6 +7,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import com.hhr.repository.QRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,6 +49,8 @@ public class QuestionServiceImpl implements QuestionService {
 	private String vscDictPath;
 	@Value("${HanLP.CustomDictionary.path.nojDict}")
 	private String nojDictPath;
+	@Value("${HanLP.CustomDictionary.path.mqDict}")
+	private String mqDictPath;
 
 	/**
 	 * 声明neo4j查询接口对象
@@ -88,6 +93,14 @@ public class QuestionServiceImpl implements QuestionService {
 		System.out.println("HanLP分词字典根目录为："+ rootDictPath + "/dictionary");
 		System.out.println(" ");
 		System.out.println("========用户自定义扩展词库开始加载========");
+
+		/**
+		 * 加载自定义的参数属性字典  设置词性 mq 1000
+		 * 1000防止冲突，优先自定义词性
+		 */
+		loadMqDict(mqDictPath);
+		System.out.println("加载参数属性字典，设置词性mq，频率0");
+
 		/**
 		 * 加载自定义的名称字典  设置词性 noj 0
 		 */
@@ -158,6 +171,7 @@ public class QuestionServiceImpl implements QuestionService {
 		String name = "";
 		String type = "";
 		String att  = "";
+		String mq  = "";
 
 
 		/**
@@ -201,6 +215,7 @@ public class QuestionServiceImpl implements QuestionService {
 					answer = sb.toString();
 				}
 				break;
+
 			case 1:
 				/**
 				 * 1 对应问题模板1 == att(参数) n(家电类型名称，如冰箱) 有哪些
@@ -229,8 +244,15 @@ public class QuestionServiceImpl implements QuestionService {
 //						jiadians111.add(jiadians11.get(i));
 //					}
 					answer = jiadians1.toString().replace("[", "").replace("]", "");
+					StringBuilder sb = new StringBuilder();
+					for(String x:jiadians1){
+						sb.append(x);
+						sb.append("<br>");
+					}
+					answer = sb.toString();
 				}
 				break;
+
 			case 2:
 				/**
 				 * 2 对应问题模板2 == 有哪些 cj(厂家) vsc(动词，如制造) n(家电类型名称，如冰箱)
@@ -249,8 +271,15 @@ public class QuestionServiceImpl implements QuestionService {
 					answer = null;
 				} else {
 					answer = pinpais0.toString().replace("[", "").replace("]", "");
+					StringBuilder sb = new StringBuilder();
+					for(String x:pinpais0){
+						sb.append(x);
+						sb.append("<br>");
+					}
+					answer = sb.toString();
 				}
 				break;
+
 			case 3:
 				/**
 				 * 3 对应问题模板3 == noj(家电具体名称，如某某某某冰箱) 价格 是多少
@@ -260,14 +289,14 @@ public class QuestionServiceImpl implements QuestionService {
 				 * 这样处理将其精确提取
 				 */
 				System.out.println("处理家电名称，拼接为：");
-				StringBuffer sb = new StringBuffer();
+				StringBuffer sb3 = new StringBuffer();
 				for(int i = 1; i < reStrings.size()-2; i++) {
-					sb.append(reStrings.get(i)); //获取noj 拼接
+					sb3.append(reStrings.get(i)); //获取noj 拼接
 					if(i != reStrings.size()-3) {
-						sb.append(" "); //加上空格
+						sb3.append(" "); //加上空格
 					}
 				}
-				name = sb.toString(); //真正的名称
+				name = sb3.toString(); //真正的名称
 				System.out.println(name);
 				System.out.println(" ");
 				System.out.println("查询Neo4j数据库：bolt://localhost:7687");
@@ -284,15 +313,138 @@ public class QuestionServiceImpl implements QuestionService {
 					answer = price.toString().replace("[", "").replace("]", "");
 				}
 				break;
+
 			case 4:
+				/**
+				 * 4 对应问题模板4   ntc vsc 哪种 家电
+				 * 返回家电名称列表，需要再次处理
+				 * 子串模糊匹配
+				 * 去重
+				 */
+				name = reStrings.get(1); //获取ntc
+				System.out.println("从查询集合中获取参数：" + name);
+				System.out.println(" ");
+				System.out.println("查询Neo4j数据库：bolt://localhost:7687");
+				process.append("从查询集合中获取参数：" + name + "<br><br>"
+						+ "查询Neo4j数据库：bolt://localhost:7687" + "<br><br>");
+				name = ".*" + name + ".*"; //模糊查询
+				List<String> jiadians4 = qRepository.getAllnByNtc(name); //名字
+				StringBuilder sb4 = new StringBuilder(); //手动构造答案
 
+				Pattern p1 = Pattern.compile("冰箱");
+				for(String x:jiadians4){
+					Matcher m1 = p1.matcher(x);
+					if(m1.find()){
+						sb4.append("冰箱");
+						sb4.append("<br>");
+						break;
+					}
+				}
+				Pattern p2 = Pattern.compile("洗衣机");
+				for(String x:jiadians4){
+					Matcher m2 = p2.matcher(x);
+					if(m2.find()){
+						sb4.append("洗衣机");
+						sb4.append("<br>");
+						break;
+					}
+				}
+				Pattern p3 = Pattern.compile("电视机");
+				for(String x:jiadians4){
+					Matcher m3 = p3.matcher(x);
+					if(m3.find()){
+						sb4.append("电视机");
+						sb4.append("<br>");
+						break;
+					}
+				}
+				Pattern p4 = Pattern.compile("空调");
+				for(String x:jiadians4){
+					Matcher m4 = p4.matcher(x);
+					if(m4.find()){
+						sb4.append("空调");
+						sb4.append("<br>");
+						break;
+					}
+				}
+				Pattern p5 = Pattern.compile("热水器");
+				for(String x:jiadians4){
+					Matcher m5 = p5.matcher(x);
+					if(m5.find()){
+						sb4.append("热水器");
+						sb4.append("<br>");
+						break;
+					}
+				}
+				answer = sb4.toString();
 				break;
+
 			case 5:
-
+				/**
+				 * 5 对应问题模板5   noj 所有参数
+				 * 获取reStrings大小，跳过 第一个位置0(index) 和 最后一个位置(所有参数)
+				 */
+				System.out.println("处理家电名称，拼接为：");
+				StringBuffer sb5 = new StringBuffer();
+				for(int i = 1; i < reStrings.size()-1; i++) {
+					sb5.append(reStrings.get(i)); //获取noj 拼接
+					if(i != reStrings.size()-2) {
+						sb5.append(" "); //加上空格
+					}
+				}
+				name = sb5.toString(); //真正的名称
+				System.out.println(name);
+				System.out.println("");
+				System.out.println("查询Neo4j数据库：bolt://localhost:7687");
+				process.append("处理家电名称，拼接为：<br>" + name + "<br><br>"
+						+ "查询Neo4j数据库：bolt://localhost:7687" + "<br><br>");
+				name = ".*" + name + ".*"; //模糊查询
+				List<String> all = qRepository.getAllByNoj(name);
+				if (all == null) {
+					answer = null;
+				} else {
+					answer = all.toString().replace("[", "").replace("]", "");
+					StringBuilder sb = new StringBuilder();
+					for(String x:all){
+						sb.append(x);
+						sb.append("<br>");
+					}
+					answer = sb.toString();
+				}
 				break;
+
 			case 6:
-
+				/**
+				 * 6 对应问题模板6   noj mq 是多少
+				 * 获取reStrings大小，跳过 第一个位置0(index) 和 最后两个位置(mq 是多少)
+				 */
+				System.out.println("处理家电名称，拼接为：");
+				StringBuffer sb6 = new StringBuffer();
+				for(int i = 1; i < reStrings.size()-2; i++) {
+					sb6.append(reStrings.get(i)); //获取noj 拼接
+					if(i != reStrings.size()-3) {
+						sb6.append(" "); //加上空格
+					}
+				}
+				name = sb6.toString(); //真正的名称
+				mq  = reStrings.get(reStrings.size()-2); //倒数第二个位置
+				System.out.println(name);
+				System.out.println("要查询的属性名：" + mq);
+				System.out.println("");
+				System.out.println("查询Neo4j数据库：bolt://localhost:7687");
+				process.append("处理家电名称，拼接为：<br>" + name
+						+ "<br>" + "要查询的属性名：" + mq + "<br><br>"
+						+ "查询Neo4j数据库：bolt://localhost:7687" + "<br><br>");
+				name = ".*" + name + ".*"; //模糊查询
+				mq = ".*" + mq + ".*"; //模糊查询
+				String mqvalue = qRepository.getMcsByNoj(name,mq);
+				if (mqvalue == null) {
+					answer = null;
+				} else {
+					answer = mqvalue.toString().replace("[", "").replace("]", "");
+				}
 				break;
+
 			default:
 				break;
 		}
@@ -429,6 +581,20 @@ public class QuestionServiceImpl implements QuestionService {
 		}
 	}
 
+	/**
+	 * 加载某参数字典
+	 * @param path
+	 */
+	public void loadMqDict(String path) {
+		File file = new File(path);
+		BufferedReader br = null;
+		try {
+			br = new BufferedReader(new FileReader(file));
+			addCustomDictionary(br, 7);
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		}
+	}
 
 	/**
 	 * 供loadDict()函数调用
@@ -486,10 +652,10 @@ public class QuestionServiceImpl implements QuestionService {
 						CustomDictionary.add(word, "noj 0");
 						break;
 					/**
-					 * 设置
+					 * 设置某参数 词性 == mq 1000
 					 */
 					case 7:
-						CustomDictionary.add(word, "");
+						CustomDictionary.add(word, "mq 1000");
 						break;
 					default:
 						break;

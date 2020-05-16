@@ -181,7 +181,7 @@ position: fixed;
 					var div = document.createElement('div'); //新建一个对话气泡-系统回复
 					div.style = 'clear:both'; //空白分割
 					ul.appendChild(div); //加入容器中
-					input.value = ''; //重置输入框
+					//input.value = ''; //重置输入框
 					newLi.scrollIntoView(); //将元素滚动到可见位置
 				}
 			})
@@ -199,11 +199,32 @@ position: fixed;
 		 * 生成图谱按钮
 		 */
 		function neoMsg() {
+			var ul = document.getElementById('content'); //获取容器
+			var newLi = document.createElement('li'); //创建新的对话气泡-系统
+			newLi.innerHTML = "正在启动数据库导入程序..."; //显示
+			newLi.className = 'msgContent left';
+			ul.appendChild(newLi); //加入容器中
+			var div = document.createElement('div');//空白分割
+			div.style = 'clear:both';
+			ul.appendChild(div); //空白分割
 			//ajax方式，访问后端
 			ajax({
 				url : '/rest/hhr/question/neo',
 				success : function(res) {
 					console.log(res);
+					//sleep(10000);
+					function sleep (time) {
+						return new Promise((resolve) => setTimeout(resolve, time));
+					}
+					sleep(10000).then(() => {
+						var newLi = document.createElement('li'); //创建新的对话气泡-系统
+						newLi.innerHTML = "数据库导入完成"; //显示
+						newLi.className = 'msgContent left';
+						ul.appendChild(newLi); //加入容器中
+						var div = document.createElement('div');//空白分割
+						div.style = 'clear:both';
+						ul.appendChild(div); //空白分割
+					})
 				}
 			})
 		}
@@ -236,7 +257,7 @@ position: fixed;
 		}
 
 		/**
-		 * 提交按钮
+		 * 提问按钮
 		 * 点击按钮发送
 		 */
 		var input = document.getElementById('msg_input'); //查找缓存，获取输入
@@ -245,7 +266,7 @@ position: fixed;
 		}
 
 		/**
-		 * 提交按钮
+		 * 提问按钮
 		 * 按enter键发送
 		 */
 		document.onkeypress = function(event) {
@@ -258,7 +279,7 @@ position: fixed;
 		}
 
 		/**
-		 * 提交按钮
+		 * 提问按钮
 		 * 消息发送与界面显示
 		 */
 		function sendMsg() {

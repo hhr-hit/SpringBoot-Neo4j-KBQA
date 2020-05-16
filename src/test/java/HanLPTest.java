@@ -35,6 +35,7 @@ public class HanLPTest {
 			System.out.println(ex.getClass()+","+ex.getMessage());
 		}		
 	}
+
 	@Test
 	public void TestB(){
 	    HanLP.Config.Normalization = true;
@@ -61,8 +62,7 @@ public class HanLPTest {
 		
 		SparkConf conf = new SparkConf().setAppName("NaiveBayesTest").setMaster("local[*]");
 		JavaSparkContext sc = new JavaSparkContext(conf);
-		
-		
+
 		/**
 		 * MLlib的本地向量主要分为两种，DenseVector和SparseVector
 		 * 前者是用来保存稠密向量，后者是用来保存稀疏向量		 
@@ -77,8 +77,7 @@ public class HanLPTest {
 		//稠密向量 == 连续的
 		Vector dense = Vectors.dense(1.0,0.0,2.0);
 		System.out.println(dense);
-		
-		
+
 		//稀疏向量 == 间隔的、指定的，未指定位置的向量值默认 = 0.0
 		int len = 3;
 		int[] index = new int[]{0,1};
@@ -130,5 +129,5 @@ public class HanLPTest {
         //最后不要忘了释放资源
         sc.close();
 	}
-		
+
 }
