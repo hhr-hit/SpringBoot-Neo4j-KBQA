@@ -68,7 +68,7 @@ public interface QRepository extends Neo4jRepository<jd_entity,Long> {
      * @param noj 家电名称
      * @return 返回参数键值对列表
      */
-    @Query("match(m)-[r]->(n) where m.name=~{noj} return r.name + \"：\" + n.name")
+    @Query("match(m)-[r]->(n) where m.name={noj} return r.name + \"：\" + n.name")
     List<String> getAllByNoj(@Param("noj") String noj);
 
     /**

@@ -35,8 +35,6 @@ public class QuestionServiceImpl implements QuestionService {
 	 */
 	@Value("${rootDirPath}")
 	private String rootDictPath;
-	@Value("${HanLP.CustomDictionary.path.dianpuDict}")
-	private String dianpuDictPath;
 	@Value("${HanLP.CustomDictionary.path.pinpaiDict}")
 	private String pinpaiDictPath;
 	@Value("${HanLP.CustomDictionary.path.jiadianDict}")
@@ -67,7 +65,6 @@ public class QuestionServiceImpl implements QuestionService {
 	public void showDictPath() {
 		System.out.println("HanLP分词字典及自定义问题模板根目录：" + rootDictPath);
 		System.out.println("用户自定义扩展词库："
-				+ dianpuDictPath + "、"
 				+ pinpaiDictPath + "、"
 				+ jiadianDictPath);
 	}
@@ -124,12 +121,6 @@ public class QuestionServiceImpl implements QuestionService {
 		 */
 		loadAttDict(attDictPath);
 		System.out.println("加载参数字典，设置词性att，频率0");
-
-		/**
-		 * 加载自定义的店铺字典  设置词性 dp 0
-		 */
-		loadDianpuDict(dianpuDictPath);
-		System.out.println("加载店铺字典，设置词性dp，频率0");
 
 		/**
 		 * 加载自定义的品牌字典  设置词性 ntc 0
@@ -398,7 +389,7 @@ public class QuestionServiceImpl implements QuestionService {
 				System.out.println("查询Neo4j数据库：bolt://localhost:7687");
 				process.append("处理家电名称，拼接为：<br>" + name + "<br><br>"
 						+ "查询Neo4j数据库：bolt://localhost:7687" + "<br><br>");
-				name = ".*" + name + ".*"; //模糊查询
+				//name = ".*" + name + ".*"; //模糊查询
 				List<String> all = qRepository.getAllByNoj(name);
 				if (all == null) {
 					answer = null;
@@ -466,23 +457,6 @@ public class QuestionServiceImpl implements QuestionService {
 		}
 		res.add(process.toString()); //加入处理过程
 		return res; //答案 //处理过程
-	}
-
-
-	/**
-	 * 调用addCustomDictionary()方法
-	 * 加载自定义店铺字典
-	 * @param path
-	 */
-	public void loadDianpuDict(String path) {
-		File file = new File(path);
-		BufferedReader br = null;
-		try {
-			br = new BufferedReader(new FileReader(file));
-			addCustomDictionary(br, 0);
-		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
-		}
 	}
 
 

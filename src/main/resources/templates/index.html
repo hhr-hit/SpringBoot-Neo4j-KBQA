@@ -142,7 +142,6 @@ position: fixed;
 }
 </style>
 <script type="text/javascript">
-
 	window.onload = function() {
 	
 		var ui1=0, ui2=0, ui3=0;
@@ -345,16 +344,29 @@ position: fixed;
 				success : function(res) {				
 					console.log(res);
 
-					var obj = eval('(' + res + ')');
+					var obj = eval('(' + res + ')'); //返回式转换为json格式
 					//obj = JSON.parse(json_str);
 					//obj = jQuery.parseJSON(json_str);
 
-					var newLi = document.createElement('li'); //新建一行
-					newLi.innerHTML = obj.answer;
+
+					var newLi = document.createElement('li'); //新建一个气泡-答案
+					if(obj.answer.indexOf("图片") >= 0) { //是详情问答
+						var start    = obj.answer.indexOf("图片") + 3; //查找图片地址 起始点
+						var end      = obj.answer.indexOf("jpg") + 2; //查找图片地址 终止点
+						var addr     = obj.answer.substr(start, end-start+1); //截取图片地址子串
+						var newStr = obj.answer.replace(addr, "<img src=\"" + addr + "\" width=\"200\" height=\"200\" />"); //显示图片
+						var lastStr  = newStr.replace("n5", "n7"); //采集的图片太小，换为大的版本
+						//console.log(lastStr);
+						newLi.innerHTML = lastStr;//写入气泡
+
+					} else { //不是详情问答
+						newLi.innerHTML = obj.answer; //直接答案内容
+					}
 					newLi.className = 'msgContent left';
 					ul.appendChild(newLi); //加入容器中
 
-					var div = document.createElement('div'); //新建一个对话气泡-系统回复
+
+					var div = document.createElement('div'); //新建-空白分割
 					div.style = 'clear:both'; //空白分割
 					ul.appendChild(div); //加入容器中
 					input.value = ''; //重置输入框
@@ -421,11 +433,10 @@ position: fixed;
 		}
 	}
 </script>
-
 </head>
 <body>
 	<canvas id="canvas" width="1293" height="717"></canvas>
-
+	
 	<button id="QABtn" style="position:absolute;width:150px;height:30px;top:60px;left:10px;font-size:18px;background-color:#;">人机问答交互</button>
 	<button id="historybtn" style="position:absolute;width:100px;height:30px;top:100px;left:60px;font-size:18px;background-color:green;">查看历史</button>
 	<button id="neobtn" style="position:absolute;width:100px;height:30px;top:140px;left:60px;font-size:18px;background-color:green;">生成图谱</button>
