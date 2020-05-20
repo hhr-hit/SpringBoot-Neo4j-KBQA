@@ -14,18 +14,19 @@
 
 .main {
 	position: absolute;
-	left:200px;
+	left:500px;
 	margin: 20px auto;
 	border: 1px solid steelblue;
-	width: 430px;
+	width: 700px;
 	height: 680px;
 }
 
 .msgInput {
 	display: block;
-	width: 406px;
+	width: 676px;
 	height: 80px;
 	margin: 10px auto;
+	font-size:18px;
 }
 
 .cqlInput {
@@ -33,7 +34,7 @@
 	bottom:5px;
 	left:10px;
 	display: block;
-	width: 365px;
+	width: 675px;
 	height: 80px;
 	font-size:18px;
 	margin: 10px auto;
@@ -55,7 +56,7 @@
 	width: 100px;
 	height: 29px;
 	bottom: 5px;
-	left: 165px;
+	left: 300px;
 	font-size: 18px;
 	background-color: #008CBA;
 }
@@ -76,7 +77,7 @@
 	width: 100px;
 	height: 29px;
 	top: 645px;
-	right: 3px;
+	right: 12px;
 	font-size: 18px;
 	background-color: #555555;
 	color: white;
@@ -84,7 +85,7 @@
 
 .content {
 	list-style: none;
-	width: 410px;
+	width: 680px;
 	height: 535px;
 	margin: 5px auto;
 	border: 1px dotted #D1D3D6;
@@ -93,7 +94,7 @@
 
 .msgContent {
 	width: auto;
-	max-width: 250px;
+	max-width: 450px;
 	height: auto;
 	word-break: break-all;
 	margin: 5px;
@@ -106,12 +107,14 @@
 	float: left;
 	text-align: left;
 	background-color: lightgrey;
+	font-size:18px;
 }
 
 .content .right {
 	float: right;
 	text-align: right;
 	background-color: yellowgreen;
+	font-size:18px;
 }
 </style>
 <style>
@@ -150,10 +153,14 @@ position: fixed;
 		 */
 		document.getElementById('QABtn').onclick = function() {
 			if(ui1==0){
-				document.getElementById('main').style.display="";
+				document.getElementById('main').style.display=""; //显示
+				document.getElementById('thecql').style.display="none";
+				document.getElementById('all').style.display="none";
 				ui1 = 1;
+				ui2 = 0;
+				ui3 = 0;
 			} else {
-				document.getElementById('main').style.display="none";
+				document.getElementById('main').style.display="none"; //隐藏
 				ui1 = 0;
 			}
 		}
@@ -162,8 +169,12 @@ position: fixed;
 		 */
 		document.getElementById('CqlBtn').onclick = function() {
 			if(ui2==0){
-				document.getElementById('thecql').style.display="";
+				document.getElementById('thecql').style.display=""; //显示
+				document.getElementById('main').style.display="none";
+				document.getElementById('all').style.display="none";
+				ui1 = 0;
 				ui2 = 1;
+				ui3 = 0;
 			} else {
 				document.getElementById('thecql').style.display="none";
 				ui2 = 0;
@@ -175,6 +186,10 @@ position: fixed;
 		document.getElementById('ProBtn').onclick = function() {
 			if(ui3==0){
 				document.getElementById('all').style.display="";
+				document.getElementById('main').style.display="none";
+				document.getElementById('thecql').style.display="none";
+				ui1 = 0;
+				ui2 = 0;
 				ui3 = 1;
 			} else {
 				document.getElementById('all').style.display="none";
@@ -437,18 +452,19 @@ position: fixed;
 <body>
 	<canvas id="canvas" width="1293" height="717"></canvas>
 	
-	<button id="QABtn" style="position:absolute;width:150px;height:30px;top:60px;left:10px;font-size:18px;background-color:#;">人机问答交互</button>
-	<button id="historybtn" style="position:absolute;width:100px;height:30px;top:100px;left:60px;font-size:18px;background-color:green;">查看历史</button>
-	<button id="neobtn" style="position:absolute;width:100px;height:30px;top:140px;left:60px;font-size:18px;background-color:green;">生成图谱</button>
-	<button id="CqlBtn" style="position:absolute;width:150px;height:30px;top:230px;left:10px;font-size:18px;background-color:#;">自助查询Neo4j</button>
-	<button id="ProBtn" style="position:absolute;width:150px;height:30px;top:320px;left:10px;font-size:18px;background-color:#;">后台处理流程</button>
+	<div style="position:absolute;width:150px;height:30px;top:10px;left:30px;color:white;font-size:18px;background-color:#;">家电问答 v2.0</div>
+	<button id="QABtn" style="position:absolute;width:150px;height:30px;top:45px;left:10px;font-size:18px;background-color:#;">人机问答交互</button>
+	<!--<button id="historybtn" style="position:absolute;width:100px;height:30px;top:80px;left:60px;font-size:18px;background-color:green;">查看历史</button>
+	<button id="neobtn" style="position:absolute;width:100px;height:30px;top:115px;left:60px;font-size:18px;background-color:green;">生成图谱</button>-->
+	<button id="CqlBtn" style="position:absolute;width:150px;height:30px;top:80px;left:10px;font-size:18px;background-color:#;">自助查询Neo4j</button>
+	<button id="ProBtn" style="position:absolute;width:150px;height:30px;top:115px;left:10px;font-size:18px;background-color:#;">后台处理流程</button>
 	
-	<div style="float:left;margin-top:0px;width:5px;height:719px;background:darkgray;margin-left:175px;"></div>
+	<div style="float:left;margin-top:0px;width:5px;height:719px;background:darkgray;margin-left:165px;"></div>
 	
 	<div id="main" class="main" style="display:none;">
 		<ul id="content" class="content">
 			<li class="msgContent left">
-				您好，自动问答系统为您服务，你有什么家电销售方面的问题可以问我（目前本系统构建知识图谱的原始数据来源于京东）
+				您好，自动问答系统为您服务，有什么家电销售方面的问题可以问我<br>（目前本系统构建知识图谱的原始数据来源于京东）
 			</li>
 			<li class="msgContent left">
 				根据您的问答历史记录，为您推荐以下问题：<br>海尔的冰箱有哪些？
@@ -456,14 +472,14 @@ position: fixed;
 			<div style="clear: both"></div>
 		</ul>
 		<textarea id="msg_input" class="msgInput"></textarea>
-		<!--<button id="neobtn" class="neobtn">生成图谱</button>
-		<button id="historybtn" class="historybtn">查看历史</button>-->
+		<button id="neobtn" class="neobtn">生成图谱</button>
+		<button id="historybtn" class="historybtn">查看历史</button>
 		<button id="sendbtn" class="sendbtn">提问</button>
 	</div>
 
-	<div style="display:none;position:absolute;left:650px;top:20px;background-color:transparent;height:650px;width:380px;" id="thecql">
-		<div id="cql" style="color:white;border:1px solid steelblue;float:left;background-color:transparent;height:680px;width:385px;font-size:16px">
-			<div id="result" style="position:absolute;top:5px;left:3px;margin:10px;color:white;border:1px solid steelblue;float:left;background-color:transparent;height:525px;width:360px;overflow-y:scroll;font-size:16px">
+	<div style="display:none;position:absolute;left:500px;top:20px;background-color:transparent;height:650px;width:700px;" id="thecql">
+		<div id="cql" style="color:white;border:1px solid steelblue;float:left;background-color:transparent;height:680px;width:700px;font-size:16px">
+			<div id="result" style="position:absolute;top:5px;left:3px;margin:10px;color:white;border:1px solid steelblue;float:left;background-color:transparent;height:525px;width:675px;overflow-y:scroll;font-size:16px">
 				数据库查询结果：<br>
 			</div>
 			<div style="font-size:16px;position:absolute;left:55px;top:555px;">输入Cypher语句，查询Neo4j数据库：</div>
@@ -472,9 +488,9 @@ position: fixed;
 		</div>
 	</div>
 
-	<div style="display:none;position:absolute;left:1040px;top:20px;background-color:transparent;height:650px;width:495px;" id="all">
+	<div style="display:none;position:absolute;left:500px;top:20px;background-color:transparent;height:650px;width:700px;" id="all">
     	<div style="float:left;background-color:transparent;height:680px;width:15px;" id="kong"></div>
-		<div id="process" style="color:white;border:1px solid steelblue;float:left;background-color:transparent;height:680px;width:450px;overflow-y:scroll;font-size:16px">
+		<div id="process" style="color:white;border:1px solid steelblue;float:left;background-color:transparent;height:680px;width:670px;overflow-y:scroll;font-size:16px">
 				KBQA-后端处理流程输出:
 		</div>
     </div>
