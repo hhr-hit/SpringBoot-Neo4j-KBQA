@@ -1,648 +1,270 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org"
-	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<html>
+<!-- Mirrored from www.zi-han.net/theme/hplus/ by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 20 Jan 2016 14:16:41 GMT -->
 <head>
-<meta charset="utf-8" />
-<title>KBQA-京东家电商品销售问答</title>
-<style type="text/css">
-* {
-	font-size: 14px;
-	padding: 0;
-	margin: 0;
-}
-
-.main {
-	position: absolute;
-	left:500px;
-	margin: 20px auto;
-	border: 1px solid steelblue;
-	width: 700px;
-	height: 680px;
-}
-
-.msgInput {
-	display: block;
-	width: 676px;
-	height: 80px;
-	margin: 10px auto;
-	font-size:18px;
-}
-
-.cqlInput {
-	position:absolute;
-	bottom:5px;
-	left:10px;
-	display: block;
-	width: 675px;
-	height: 80px;
-	font-size:18px;
-	margin: 10px auto;
-}
-
-
-.neobtn {
-	position: absolute;
-	width: 100px;
-	height: 29px;
-	bottom: 5px;
-	left: 10px;
-	font-size: 18px;
-	background-color: #4CAF50;
-}
-
-.historybtn {
-	position: absolute;
-	width: 100px;
-	height: 29px;
-	bottom: 5px;
-	left: 300px;
-	font-size: 18px;
-	background-color: #008CBA;
-}
-
-.sendbtn {
-	position: absolute;
-	width: 100px;
-	height: 29px;
-	bottom: 5px;
-	right: 10px;
-	font-size: 18px;
-	background-color: #555555;
-	color: white;
-}
-
-.cqlbtn {
-	position: absolute;
-	width: 100px;
-	height: 29px;
-	top: 645px;
-	right: 12px;
-	font-size: 18px;
-	background-color: #555555;
-	color: white;
-}
-
-.content {
-	list-style: none;
-	width: 680px;
-	height: 535px;
-	margin: 5px auto;
-	border: 1px dotted #D1D3D6;
-	overflow-y: scroll;
-}
-
-.msgContent {
-	width: auto;
-	max-width: 450px;
-	height: auto;
-	word-break: break-all;
-	margin: 5px;
-	padding: 3px;
-	border-radius: 5px;
-	font-size: 15px;
-}
-
-.content .left {
-	float: left;
-	text-align: left;
-	background-color: lightgrey;
-	font-size:18px;
-}
-
-.content .right {
-	float: right;
-	text-align: right;
-	background-color: yellowgreen;
-	font-size:18px;
-}
-</style>
-<style>
-html,body {
-    font-size: 14px;
-    font-family: "微软雅黑", Helvetica, Tahoma, Arial, sans-serif;
-    color: #000;
-    background-color: #30333F;
-    margin: 0;
-    padding: 0;
-}
-img {
-    border: 0;
-}
-.cf:before,.cf:after {
-    display: table;
-    content: "";
-}
-.cf:after {
-    clear: both;
-}
-.cf {
-    *zoom: 1;
-}
-canvas{
-position: fixed;
-    top: 0px;
-}
-</style>
-<script type="text/javascript">
-	window.onload = function() {
-	
-		var ui1=0, ui2=0, ui3=0;
-		/**
-		 * 界面1
-		 */
-		document.getElementById('QABtn').onclick = function() {
-			if(ui1==0){
-				document.getElementById('main').style.display=""; //显示
-				document.getElementById('thecql').style.display="none";
-				document.getElementById('all').style.display="none";
-				ui1 = 1;
-				ui2 = 0;
-				ui3 = 0;
-			} else {
-				document.getElementById('main').style.display="none"; //隐藏
-				ui1 = 0;
-			}
-		}
-		/**
-		 * 界面2
-		 */
-		document.getElementById('CqlBtn').onclick = function() {
-			if(ui2==0){
-				document.getElementById('thecql').style.display=""; //显示
-				document.getElementById('main').style.display="none";
-				document.getElementById('all').style.display="none";
-				ui1 = 0;
-				ui2 = 1;
-				ui3 = 0;
-			} else {
-				document.getElementById('thecql').style.display="none";
-				ui2 = 0;
-			}
-		}
-		/**
-		 * 界面3
-		 */
-		document.getElementById('ProBtn').onclick = function() {
-			if(ui3==0){
-				document.getElementById('all').style.display="";
-				document.getElementById('main').style.display="none";
-				document.getElementById('thecql').style.display="none";
-				ui1 = 0;
-				ui2 = 0;
-				ui3 = 1;
-			} else {
-				document.getElementById('all').style.display="none";
-				ui3 = 0;
-			}
-		}
-	
-		/**
-		 * 启动时，先访问后台，提前加载字典和模板
-		 * 不算入问答历史
-		 */
-		ajax({
-			url : '/rest/hhr/question/onload',
-			success : function(res) {
-				console.log(res);
-			}
-		})
-
-		/**
-		 * 查看历史按钮
-		 */
-		document.getElementById('historybtn').onclick = function() {
-			historyMsg(); //点击按钮，发送消息
-		}
-
-		/**
-		 * 查看历史按钮
-		 */
-		function historyMsg() {
-			var ul = document.getElementById('content'); //获取容器
-			var newLi = document.createElement('li'); //创建新的对话气泡-系统
-			newLi.innerHTML = "您的问答历史如下"; //显示
-			newLi.className = 'msgContent left';
-			ul.appendChild(newLi); //加入容器中
-			var div = document.createElement('div');//空白分割
-			div.style = 'clear:both';
-			ul.appendChild(div); //空白分割
-			//ajax方式，访问后台
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <title>KBQA - 京东家电商品销售问答</title>
+    <meta name="keywords" content="知识图谱,自动问答,家电">
+    <meta name="description" content="基于知识图谱的自动问答系统，知识图谱根据京东的数据建立">
+    <!--[if lt IE 9]>
+    <meta http-equiv="refresh" content="0;ie.html" />
+    <![endif]-->
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="../static/css/bootstrap.min14ed.css?v=3.3.6" rel="stylesheet">
+    <link href="../static/css/font-awesome.min93e3.css?v=4.4.0" rel="stylesheet">
+    <link href="../static/css/animate.min.css" rel="stylesheet">
+    <link href="../static/css/style.min862f.css?v=4.1.0" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+	<script type="text/javascript">
+		window.onload = function() {
+			/**
+			* 启动时，先访问后台，提前加载字典和模板
+			* 不算入问答历史
+			*/
 			ajax({
-				url : '/rest/hhr/question/history',
+				url : '/rest/hhr/question/onload',
 				success : function(res) {
-					console.log(res);
-					var newLi = document.createElement('li'); //新建一行
-					newLi.innerHTML = res;
-					newLi.className = 'msgContent left';
-					ul.appendChild(newLi); //加入容器中
-					var div = document.createElement('div'); //新建一个对话气泡-系统回复
-					div.style = 'clear:both'; //空白分割
-					ul.appendChild(div); //加入容器中
-					//input.value = ''; //重置输入框
-					newLi.scrollIntoView(); //将元素滚动到可见位置
-				}
-			})
-			newLi.scrollIntoView(); //将元素滚动到可见位置
-		}
-
-		/**
-		 * 生成图谱按钮
-		 */
-		document.getElementById('neobtn').onclick = function() {
-			neoMsg(); //点击按钮，发送消息
-		}
-
-		/**
-		 * 生成图谱按钮
-		 */
-		function neoMsg() {
-			var ul = document.getElementById('content'); //获取容器
-			var newLi = document.createElement('li'); //创建新的对话气泡-系统
-			newLi.innerHTML = "正在启动数据库导入程序..."; //显示
-			newLi.className = 'msgContent left';
-			ul.appendChild(newLi); //加入容器中
-			var div = document.createElement('div');//空白分割
-			div.style = 'clear:both';
-			ul.appendChild(div); //空白分割
-			//ajax方式，访问后端
-			ajax({
-				url : '/rest/hhr/question/neo',
-				success : function(res) {
-					console.log(res);
-					//sleep(10000);
-					function sleep (time) {
-						return new Promise((resolve) => setTimeout(resolve, time));
-					}
-					sleep(10000).then(() => {
-						var newLi = document.createElement('li'); //创建新的对话气泡-系统
-						newLi.innerHTML = "数据库导入完成"; //显示
-						newLi.className = 'msgContent left';
-						ul.appendChild(newLi); //加入容器中
-						var div = document.createElement('div');//空白分割
-						div.style = 'clear:both';
-						ul.appendChild(div); //空白分割
-					})
+					console.log("后台预加载成功");
 				}
 			})
 		}
-
 		/**
-		 * 查询按钮
-		 * 自助查询数据库
-		 */
-		document.getElementById('cqlbtn').onclick = function() {
-			cqlMsg(); //点击按钮，发送消息
-		}
-
-		/**
-		 * 查询按钮
-		 * 消息发送与界面显示
-		 */
-		function cqlMsg() {
-			var input = document.getElementById('cql_input'); //查找缓存，获取输入
-			var result = document.getElementById('result'); //结果区域
-			//ajax方式，发送查询语句
-			ajax({
-				url : '/rest/hhr/question/cql?cypher='+ input.value,
-				success : function(res) {
-					console.log(res);
-					//结果输出
-					document.getElementById("result").innerHTML = "数据库查询结果：<br>" + res;
-				}
-			})
-			//input.value = '';
-		}
-
-		/**
-		 * 提问按钮
-		 * 点击按钮发送
-		 */
-		var input = document.getElementById('msg_input'); //查找缓存，获取输入
-		document.getElementById('sendbtn').onclick = function() {
-			sendMsg(); //点击按钮，发送消息
-		}
-
-		/**
-		 * 提问按钮
-		 * 按enter键发送
-		 */
-		document.onkeypress = function(event) {
-			var e = event || window.event;
-			var keycode = e.keyCode || e.which;
-			console.log(e); //F12输出
-			if (keycode == 13) {//按下enter键，发送消息
-				sendMsg();
+		* ajax
+		* XMLHTTP通讯方式
+		*/
+		function ajax(obj) {
+			var xhr = null;
+			if (window.ActiveXObject) {
+				xhr = new ActiveXObject('Microsoft.XMLHTTP');
+			} else {
+				xhr = new XMLHttpRequest();
 			}
-		}
 
-		/**
-		 * 提问按钮
-		 * 消息发送与界面显示
-		 */
-		function sendMsg() {
-			var input = document.getElementById('msg_input'); //查找缓存，获取输入
-			var ul = document.getElementById('content'); //获取容器
+			//打开与服务器的连接 //按需添加http头
+			if (obj.method) {
+				xhr.open(obj.method, obj.url, true);
+			} else {
+				xhr.open('get', obj.url, true);
+			}
+			xhr.setRequestHeader("Content-Type",
+					"application/x-www-form-urlencoded");
+			xhr.setRequestHeader("Authorization",
+					"APPCODE 3e9dfb924f464e9593a95f9d2bbf4348");
 
-			var newLi = document.createElement('li'); //创建新的对话气泡-用户
-			newLi.innerHTML = input.value; //显示
-			newLi.className = 'msgContent right';
-			ul.appendChild(newLi); //加入容器中
-
-			var div = document.createElement('div');
-			div.style = 'clear:both';
-			ul.appendChild(div); //空白分割
-
-			//ajax方式，发送问句
-			ajax({
-				url : '/rest/hhr/question/query?question='+ input.value,
-				success : function(res) {				
-					console.log(res);
-
-					var obj = eval('(' + res + ')'); //返回式转换为json格式
-					//obj = JSON.parse(json_str);
-					//obj = jQuery.parseJSON(json_str);
-
-
-					var newLi = document.createElement('li'); //新建一个气泡-答案
-					if(obj.answer.indexOf("图片") >= 0) { //是详情问答
-						var start    = obj.answer.indexOf("图片") + 3; //查找图片地址 起始点
-						var end      = obj.answer.indexOf("jpg") + 2; //查找图片地址 终止点
-						var addr     = obj.answer.substr(start, end-start+1); //截取图片地址子串
-						var newStr = obj.answer.replace(addr, "<img src=\"" + addr + "\" width=\"200\" height=\"200\" />"); //显示图片
-						var lastStr  = newStr.replace("n5", "n7"); //采集的图片太小，换为大的版本
-						//console.log(lastStr);
-						newLi.innerHTML = lastStr;//写入气泡
-
-					} else { //不是详情问答
-						newLi.innerHTML = obj.answer; //直接答案内容
-					}
-					newLi.className = 'msgContent left';
-					ul.appendChild(newLi); //加入容器中
-
-
-					var div = document.createElement('div'); //新建-空白分割
-					div.style = 'clear:both'; //空白分割
-					ul.appendChild(div); //加入容器中
-					input.value = ''; //重置输入框
-					newLi.scrollIntoView(); //将元素滚动到可见位置
-
-					//处理流程输出
-					var pro1 = "后端处理流程输出:<br>========开始加载问题模板========<br>模板文件：D:/_HhrWorkSpace/Java/SpringBoot-Neo4j-KBQA/myHanLP/data/question/question_classification.txt<br>按行读入文件，以 : 分割<br>构造 模板-序号 的哈希表 questionsPattern<br>========问题模板加载完毕========<br> <br>========开始加载词汇表文件========<br>词汇表位置：D:/_HhrWorkSpace/Java/SpringBoot-Neo4j-KBQA/myHanLP/data/question/vocabulary.txt<br>========词汇表文件加载完毕========<br> <br>========开始构造单词-序号 哈希表========<br>以 : 分割读取的文件字符数据流<br>========单词-序号 哈希表构造完毕========<br> <br>========开始加载问题训练集========<br>加载训练集0：某品牌的某类型家电<br>调试输出——问题模板0对应的向量：<br>[1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]<br>[0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]<br>[0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]<br>[0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]<br>[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]<br>[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]<br>[1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]<br>加载训练集1：某种参数的某类型家电<br>调试输出——问题模板1对应的向量：<br>[1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]<br>[1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]<br>[0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]<br>[0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]<br>[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]<br>[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]<br>[1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0]<br>加载训练集2：有哪些厂商生产某类型家电<br>调试输出——问题模板2对应的向量：<br>[1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]<br>[1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]<br>[1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]<br>[1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0]<br>[1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]<br>加载训练集3：某个家电的价格<br>调试输出——问题模板3对应的向量：<br>[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]<br>[0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]<br>[0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0]<br>[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]<br>[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0]<br>加载训练集4：某品牌有哪些家电种类<br>========问题训练集加载完毕========<br> <br>========开始朴素贝叶斯分类训练========<br>转换训练集为RDD——弹性分布式数据集<br>Spark-NaiveBayes生成训练器，开始训练<br>========朴素贝叶斯分类训练结束========<br> <br>HanLP分词字典根目录为：D:/_HhrWorkSpace/Java/SpringBoot-Neo4j-KBQA/myHanLP/data/dictionary<br> <br>========用户自定义扩展词库开始加载========<br>加载名称字典，设置词性noj，频率0<br>加载动词字典，设置词性vsc，频率0<br>加载厂家字典，设置词性cj，频率0<br>加载参数字典，设置词性att，频率0<br>加载店铺字典，设置词性dp，频率0<br>加载品牌字典，设置词性ntc，频率0<br>加载家电种类字典，设置词性n，频率0<br>========用户自定义字典加载完毕========<br> <br>系统已收到用户在前端提交的问句，开始分析该问句<br> <br>";
-					document.getElementById("process").innerHTML = pro1 + obj.process;
-				}
-			})
-
-			input.value = '';
-			newLi.scrollIntoView(); //将元素滚动到可见位置
-		}
-
-	}
-
-
-	/**
-	 * ajax
-	 * XMLHTTP通讯方式
-	 */
-	function ajax(obj) {
-		var xhr = null;
-		if (window.ActiveXObject) {
-			xhr = new ActiveXObject('Microsoft.XMLHTTP');
-		} else {
-			xhr = new XMLHttpRequest();
-		}
-
-		//打开与服务器的连接 //按需添加http头
-		if (obj.method) {
-			xhr.open(obj.method, obj.url, true);
-		} else {
-			xhr.open('get', obj.url, true);
-		}
-		xhr.setRequestHeader("Content-Type",
-				"application/x-www-form-urlencoded");
-		xhr.setRequestHeader("Authorization",
-				"APPCODE 3e9dfb924f464e9593a95f9d2bbf4348");
-
-		//通信状态监视
-		xhr.onreadystatechange = function() {
-			if (xhr.readyState == 4) {
-				//数据接收完毕
-				if (xhr.status == 200) {
-					console.log('请求成功',xhr.responseText);
-					if (obj.success) {
-						obj.success(xhr.responseText); //返回答案res
-					}
-				} else {
-					console.log(xhr.status,'请求出错')
-					if (obj.failure) {
-						obj.failure('请求失败')
+			//通信状态监视
+			xhr.onreadystatechange = function() {
+				if (xhr.readyState == 4) {
+					//数据接收完毕
+					if (xhr.status == 200) {
+						console.log('请求成功');
+						if (obj.success) {
+							obj.success(xhr.responseText); //返回答案res
+						}
+					} else {
+						console.log(xhr.status,'请求出错')
+						if (obj.failure) {
+							obj.failure('请求失败')
+						}
 					}
 				}
 			}
-		}
 
-		if (obj.method == undefined || obj.method.toLowerCase() == 'get') {
-			xhr.send(null);
-		} else {
-			xhr.send(obj.params);
+			if (obj.method == undefined || obj.method.toLowerCase() == 'get') {
+				xhr.send(null);
+			} else {
+				xhr.send(obj.params);
+			}
 		}
-	}
-</script>
+	</script>
 </head>
-<body>
-	<canvas id="canvas" width="1293" height="717"></canvas>
-	
-	<div style="position:absolute;width:150px;height:30px;top:10px;left:30px;color:white;font-size:18px;background-color:#;">家电问答 v2.0</div>
-	<button id="QABtn" style="position:absolute;width:150px;height:30px;top:45px;left:10px;font-size:18px;background-color:#;">人机问答交互</button>
-	<!--<button id="historybtn" style="position:absolute;width:100px;height:30px;top:80px;left:60px;font-size:18px;background-color:green;">查看历史</button>
-	<button id="neobtn" style="position:absolute;width:100px;height:30px;top:115px;left:60px;font-size:18px;background-color:green;">生成图谱</button>-->
-	<button id="CqlBtn" style="position:absolute;width:150px;height:30px;top:80px;left:10px;font-size:18px;background-color:#;">自助查询Neo4j</button>
-	<button id="ProBtn" style="position:absolute;width:150px;height:30px;top:115px;left:10px;font-size:18px;background-color:#;">后台处理流程</button>
-	
-	<div style="float:left;margin-top:0px;width:5px;height:719px;background:darkgray;margin-left:165px;"></div>
-	
-	<div id="main" class="main" style="display:none;">
-		<ul id="content" class="content">
-			<li class="msgContent left">
-				您好，自动问答系统为您服务，有什么家电销售方面的问题可以问我<br>（目前本系统构建知识图谱的原始数据来源于京东）
-			</li>
-			<li class="msgContent left">
-				根据您的问答历史记录，为您推荐以下问题：<br>海尔的冰箱有哪些？
-			</li>
-			<div style="clear: both"></div>
-		</ul>
-		<textarea id="msg_input" class="msgInput"></textarea>
-		<button id="neobtn" class="neobtn">生成图谱</button>
-		<button id="historybtn" class="historybtn">查看历史</button>
-		<button id="sendbtn" class="sendbtn">提问</button>
-	</div>
-
-	<div style="display:none;position:absolute;left:500px;top:20px;background-color:transparent;height:650px;width:700px;" id="thecql">
-		<div id="cql" style="color:white;border:1px solid steelblue;float:left;background-color:transparent;height:680px;width:700px;font-size:16px">
-			<div id="result" style="position:absolute;top:5px;left:3px;margin:10px;color:white;border:1px solid steelblue;float:left;background-color:transparent;height:525px;width:675px;overflow-y:scroll;font-size:16px">
-				数据库查询结果：<br>
+<body class="fixed-sidebar full-height-layout gray-bg" style="overflow:hidden">
+    <div id="wrapper">
+        <!--左侧导航开始-->
+        <nav class="navbar-default navbar-static-side" role="navigation">
+            <div class="nav-close"><i class="fa fa-times-circle"></i>
+            </div>
+            <div class="sidebar-collapse">
+                <ul class="nav" id="side-menu">
+                    <li class="nav-header">
+                        <div class="dropdown profile-element">
+                            <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                                <span class="clear">
+                                    <span class="block m-t-xs"><strong class="font-bold" style="font-size:20px">家电销售问答 v2.0</strong></span>
+                                </span>
+                            </a>
+                        </div>
+                        <div class="logo-element">KBQA
+                        </div>
+                    </li>                   
+                    <li>
+                        <a class="J_menuItem" href="/src/main/resources/templates/toPage?url=/kbqa">
+							<i class="fa fa-columns"></i> 
+							<span class="nav-label">人机问答交互</span>
+						</a>
+                    </li>
+					<li>
+                        <a class="J_menuItem" href="/src/main/resources/templates/toPage?url=/cql">
+							<i class="fa fa-edit"></i>
+							<span class="nav-label">自助查询Neo4j</span>
+						</a>
+                    </li>
+					<li>
+                        <a class="J_menuItem" href="/src/main/resources/templates/toPage?url=/initKBQA">
+							<i class="fa fa-desktop"></i>
+							<span class="nav-label">原始问答系统</span>
+						</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <!--左侧导航结束-->
+        <!--右侧部分开始-->
+        <div id="page-wrapper" class="gray-bg dashbard-1">
+            <div class="row border-bottom">
+                <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+                    <div class="navbar-header">
+						<a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#">
+							<i class="fa fa-bars"></i> 
+						</a>
+                    </div>
+                    <ul class="nav navbar-top-links navbar-right">
+                        <li class="dropdown hidden-xs">
+                            <a class="right-sidebar-toggle" aria-expanded="false">
+                                <i class="fa fa-tasks"></i> 系统主题
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="row content-tabs">
+                <button class="roll-nav roll-left J_tabLeft"><i class="fa fa-backward"></i>
+                </button>
+                <nav class="page-tabs J_menuTabs">
+                    <div class="page-tabs-content">
+                        <a href="javascript:;" class="active J_menuTab" data-id="index_v1.html">首页</a>
+                    </div>
+                </nav>
+                <button class="roll-nav roll-right J_tabRight"><i class="fa fa-forward"></i>
+                </button>
+                <div class="btn-group roll-nav roll-right">
+                    <button class="dropdown J_tabClose" data-toggle="dropdown">关闭操作<span class="caret"></span>
+                    </button>
+                    <ul role="menu" class="dropdown-menu dropdown-menu-right">
+                        <li class="J_tabShowActive"><a>定位当前选项卡</a>
+                        </li>
+                        <li class="divider"></li>
+                        <li class="J_tabCloseAll"><a>关闭全部选项卡</a>
+                        </li>
+                        <li class="J_tabCloseOther"><a>关闭其他选项卡</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row J_mainContent" id="content-main">
+                <iframe class="J_iframe" name="iframe0" width="100%" height="100%" src="/main" frameborder="0" data-id="index_v1.html" seamless></iframe>
 			</div>
-			<div style="font-size:16px;position:absolute;left:55px;top:555px;">输入Cypher语句，查询Neo4j数据库：</div>
-			<textarea id="cql_input" class="cqlInput"></textarea>
-			<button id="cqlbtn" class="cqlbtn">查询</button>
-		</div>
-	</div>
-
-	<div style="display:none;position:absolute;left:500px;top:20px;background-color:transparent;height:650px;width:700px;" id="all">
-    	<div style="float:left;background-color:transparent;height:680px;width:15px;" id="kong"></div>
-		<div id="process" style="color:white;border:1px solid steelblue;float:left;background-color:transparent;height:680px;width:670px;overflow-y:scroll;font-size:16px">
-				KBQA-后端处理流程输出:
-		</div>
+            <div class="footer">
+                <div class="pull-right">&copy; 2020-2020 <a href="https://blog.csdn.net/hhr603894090" target="_blank">hr's blog</a>
+                </div>
+            </div>
+        </div>
+        <!--右侧部分结束-->
+        <!--右侧边栏开始-->
+        <div id="right-sidebar">
+            <div class="sidebar-container">
+                <ul class="nav nav-tabs navs-3">
+                    <li class="active">
+                        <a data-toggle="tab" href="#tab-1">
+                            <i class="fa fa-gear"></i> 主题
+                        </a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div id="tab-1" class="tab-pane active">
+                        <div class="sidebar-title">
+                            <h3> <i class="fa fa-comments-o"></i> 主题设置</h3>
+                            <small><i class="fa fa-tim"></i> 你可以从这里选择和预览主题的布局和样式，这些设置会被保存在本地，下次打开的时候会直接应用这些设置。</small>
+                        </div>
+                        <div class="skin-setttings">
+                            <div class="title">主题设置</div>
+                            <div class="setings-item">
+                                <span>收起左侧菜单</span>
+                                <div class="switch">
+                                    <div class="onoffswitch">
+                                        <input type="checkbox" name="collapsemenu" class="onoffswitch-checkbox" id="collapsemenu">
+                                        <label class="onoffswitch-label" for="collapsemenu">
+                                            <span class="onoffswitch-inner"></span>
+                                            <span class="onoffswitch-switch"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="setings-item">
+                                <span>固定顶部</span>
+                                <div class="switch">
+                                    <div class="onoffswitch">
+                                        <input type="checkbox" name="fixednavbar" class="onoffswitch-checkbox" id="fixednavbar">
+                                        <label class="onoffswitch-label" for="fixednavbar">
+                                            <span class="onoffswitch-inner"></span>
+                                            <span class="onoffswitch-switch"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="setings-item">
+                                <span>
+								固定宽度
+								</span>
+                                <div class="switch">
+                                    <div class="onoffswitch">
+                                        <input type="checkbox" name="boxedlayout" class="onoffswitch-checkbox" id="boxedlayout">
+                                        <label class="onoffswitch-label" for="boxedlayout">
+                                            <span class="onoffswitch-inner"></span>
+                                            <span class="onoffswitch-switch"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="title">皮肤选择</div>
+                            <div class="setings-item default-skin nb">
+                                <span class="skin-name ">
+								<a href="#" class="s-skin-0">
+								默认皮肤
+								</a>
+								</span>
+                            </div>
+                            <div class="setings-item blue-skin nb">
+                                <span class="skin-name ">
+								<a href="#" class="s-skin-1">
+								蓝色主题
+								</a>
+								</span>
+                            </div>
+                            <div class="setings-item yellow-skin nb">
+                                <span class="skin-name ">
+								<a href="#" class="s-skin-3">
+								黄色/紫色主题
+								</a>
+								</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--右侧边栏结束-->
     </div>
-	
+    <script src="../static/js/jquery.min.js?v=2.1.4" type="text/javascript"></script>
+    <script src="../static/js/bootstrap.min.js?v=3.3.6" type="text/javascript"></script>
+    <script src="../static/js/plugins/metisMenu/jquery.metisMenu.js" type="text/javascript"></script>
+    <script src="../static/js/plugins/slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+    <script src="../static/js/plugins/layer/layer.min.js" type="text/javascript"></script>
+    <script src="../static/js/hplus.min.js?v=4.1.0" type="text/javascript"></script>
+    <script src="../static/js/contabs.min.js" type="text/javascript"></script>
+    <script src="../static/js/plugins/pace/pace.min.js" type="text/javascript"></script>
 </body>
-
-<script type="text/javascript">
-window.requestAnimFrame = (function () {
-    return window.requestAnimationFrame ||
-        window.webkitRequestAnimationFrame ||
-        window.mozRequestAnimationFrame ||
-        function (callback) {
-            window.setTimeout(callback, 1000 / 60);
-        };
-})();
-var can = document.getElementById("canvas");
-var cxt = can.getContext("2d");
-can.width = 1920;
-can.height = 950;
-cxt.lineWidth = 0.3;
-//初始链接线条显示位置
-var mousePosition = {
-    x: 30 * can.width / 100,
-    y: 30 * can.height / 100
-}
-//圆形粒子对象参数
-var dots = {
-    n: 500,//圆形粒子个数
-    distance: 50,//圆形粒子之间的距离
-    d_radius: 100,//粒子距离鼠标点的距离
-    array: []//保存n个圆形粒子对象
-}
-//创建随即颜色值
-function colorValue(min) {
-    return Math.floor(Math.random() * 255 + min);
-}
-function createColorStyle(r, g, b) {
-    return "rgba(" + r + "," + g + "," + b + ", 1)";
-}
-//混合两个圆形粒子的颜色
-function mixConnect(c1, r1, c2, r2) {//圆的颜色 半径
-    return (c1 * r1 + c2 * r2) / (r1 + r2);
-};
-//生成线条的颜色
-function lineColor(dot1, dot2) {//获取具体的圆的颜色再计算
-    var color1 = dot1.color,
-        color2 = dot2.color;
-    var r = mixConnect(color1.r, dot1.radius, color2.r, dot2.radius);
-    var g = mixConnect(color1.g, dot1.radius, color2.g, dot2.radius);
-    var b = mixConnect(color1.b, dot1.radius, color2.b, dot2.radius);
-    return createColorStyle(Math.floor(r), Math.floor(g), Math.floor(b));
-}
-//生成圆形粒子的颜色对象
-function Color(min) {
-    min = min || 0;
-    this.r = colorValue(min);
-    this.g = colorValue(min);
-    this.b = colorValue(min);
-    this.style = createColorStyle(this.r, this.g, this.b);
-}
-//创建圆形粒子对象
-function Dot() {
-    //圆形粒子随机圆心坐标点
-    this.x = Math.random() * can.width;
-    this.y = Math.random() * can.height;
-    //x y 方向运动的速度值
-    this.vx = -0.5 + Math.random();
-    this.vy = -0.5 + Math.random();
-
-    this.radius = Math.random() * 5;
-    //this.color = "#ff3333";
-    this.color = new Color();
-}
-//绘制出圆形粒子
-Dot.prototype.draw = function () {
-    cxt.beginPath();
-    cxt.fillStyle = this.color.style;
-    cxt.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
-    cxt.fill();
-}
-//添加圆形粒子
-function createCircle() {
-	/*<![CDATA[*/  for (var i = 0; i < dots.n; i++) {
-        dots.array.push(new Dot());
-    }/*<![CDATA[*/
-}
-//绘制出圆形粒子
-function drawDots() {
-    for (var i = 0; i < dots.n; i++) {
-        var dot = dots.array[i];
-        dot.draw();
-    }
-}
-
-//drawDots();
-//移动
-function moveDots() {
-    for (var i = 0; i < dots.n; i++) {
-        var dot = dots.array[i];
-        //当圆形粒子对象碰壁的时候就反弹回来
-        if (dot.y < 0 || dot.y > can.height) {
-            dot.vx = dot.vx;
-            dot.vy = -dot.vy;
-        } else if (dot.x < 0 || dot.x > can.width) {
-            dot.vx = -dot.vx;
-            dot.vy = dot.vy;
-        }
-        //给圆形粒子圆心坐标加上速度值移动圆形粒子
-        dot.x += dot.vx;
-        dot.y += dot.vy;
-    }
-}
-//链接粒子对象
-function connectDots() {
-    for (var i = 0; i < dots.n; i++) {
-        for (var j = 0; j < dots.n; j++) {
-            iDot = dots.array[i];
-            jDot = dots.array[j];
-            /*<![CDATA[*/  if ((iDot.x - jDot.x) < dots.distance && (iDot.y - jDot.y) < dots.distance && (iDot.x - jDot.x) > -dots.distance && (iDot.y - jDot.y) > -dots.distance) {
-                if ((iDot.x - mousePosition.x) < dots.d_radius && (iDot.y - mousePosition.y) < dots.d_radius && (iDot.x - mousePosition.x) > -dots.d_radius && (iDot.y - mousePosition.y) > -dots.d_radius) {
-                    cxt.beginPath();
-                    //cxt.strokeStyle = "yellow";
-                    cxt.strokeStyle = lineColor(iDot, jDot);
-                    cxt.moveTo(iDot.x, iDot.y);
-                    cxt.lineTo(jDot.x, jDot.y);
-                    cxt.closePath();
-                    cxt.stroke();
-                }
-
-            }/*]]>*/
-        }
-    }
-}
-createCircle();
-//让圆形粒子不断的移动
-function animateDots() {
-    cxt.clearRect(0, 0, can.width, can.height);
-    moveDots();
-    connectDots()
-    drawDots();
-    requestAnimFrame(animateDots);
-}
-animateDots();
-
-can.onmousemove = function (ev) {
-    var ev = ev || window.event;
-    mousePosition.x = ev.pageX;
-    mousePosition.y = ev.pageY;
-}
-can.onmouseout = function () {
-    mousePosition.x = can.width / 2;
-    mousePosition.y = can.height / 2;
-}
-</script>
+<!-- Mirrored from www.zi-han.net/theme/hplus/ by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 20 Jan 2016 14:17:11 GMT -->
 </html>

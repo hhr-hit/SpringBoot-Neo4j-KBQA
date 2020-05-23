@@ -456,6 +456,8 @@ public class QuestionServiceImpl implements QuestionService {
 			res.add("sorry,我没有找到你要的答案");
 		}
 		res.add(process.toString()); //加入处理过程
+		process.setLength(0); //清空
+
 		return res; //答案 //处理过程
 	}
 

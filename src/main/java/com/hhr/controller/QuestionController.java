@@ -1,12 +1,14 @@
 package com.hhr.controller;
 
+import com.hhr.process.ModelProcess;
+import com.hhr.service.impl.QuestionServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.hhr.service.QuestionService;
 import org.neo4j.driver.v1.*;
-
 import java.io.*;
 import java.util.List;
 
@@ -16,6 +18,26 @@ public class QuestionController {
 	
 	@Autowired
 	QuestionService questService;
+
+	@Autowired
+	QuestionServiceImpl questServiceImpl;
+
+	@Value("${rootDirPath}")
+	private String rootDictPath;
+	@Value("${HanLP.CustomDictionary.path.pinpaiDict}")
+	private String pinpaiDictPath;
+	@Value("${HanLP.CustomDictionary.path.jiadianDict}")
+	private String jiadianDictPath;
+	@Value("${HanLP.CustomDictionary.path.attDict}")
+	private String attDictPath;
+	@Value("${HanLP.CustomDictionary.path.cjDict}")
+	private String cjDictPath;
+	@Value("${HanLP.CustomDictionary.path.vscDict}")
+	private String vscDictPath;
+	@Value("${HanLP.CustomDictionary.path.nojDict}")
+	private String nojDictPath;
+	@Value("${HanLP.CustomDictionary.path.mqDict}")
+	private String mqDictPath;
 
 	/**
 	 * 问答查询的控制器
@@ -141,8 +163,18 @@ public class QuestionController {
 	 */
 	@RequestMapping("/onload")
 	public String loadDictAndPattern() throws Exception {
-		List<String> list = questService.answer("预加载");
-		return "问题模板和字典，预加载成功";
+		//List<String> list = questService.answer("预加载");
+		ModelProcess queryProcess = new ModelProcess(rootDictPath);
+		System.out.println("开始加载字典");
+		questServiceImpl.loadMqDict(mqDictPath);
+		questServiceImpl.loadNojDict(nojDictPath);
+		questServiceImpl.loadVscDict(vscDictPath);
+		questServiceImpl.loadCjDict(cjDictPath);
+		questServiceImpl.loadAttDict(attDictPath);
+		questServiceImpl.loadPinpaiDict(pinpaiDictPath);
+		questServiceImpl.loadJiadianDict(jiadianDictPath);
+		System.out.println("字典加载成功");
+		return "扩展字典预加载成功，问题模板预训练成功";
 	}
 
 	/**

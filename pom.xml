@@ -123,7 +123,16 @@
 				<includes>				  
 					<include>**/*.properties</include>
 					<include>**/*.xml</include>
+					<!--加载模板文件-->
 					<include>**/*.html</include>
+					<include>**/*.js</include>
+					<include>**/*.css</include>
+					<include>**/*.png</include>
+					<include>**/*.gif</include>
+					<include>**/*.gif</include>
+					<!--加载静态文件-->
+					<include>/static/</include>
+					<include>/static/**</include>
 				</includes>
 				<filtering>false</filtering>
 			</resource>			

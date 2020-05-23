@@ -24,6 +24,8 @@ import com.hankcs.hanlp.seg.common.Term;
  */
 public class ModelProcess {
 
+	String history1 = "", history2 = "";// 原句子 模板句式
+
 	StringBuffer process = new StringBuffer(); //处理流程
 
 	/**
@@ -106,30 +108,7 @@ public class ModelProcess {
 		System.out.println(" ");
 		process.append("原始句子内容为：“" + queryString + "”<br><br>");
 
-		/**
-		 * 将queryString存至txt文件新的一行
-		 */
-		if(queryString != "预加载"){
-			try {
-				File file = new File("D:\\_HhrWorkSpace\\Java\\SpringBoot-Neo4j-KBQA\\history.txt");
-				if(!file.exists()) {
-					file.createNewFile(); // 创建新文件,有同名的文件的话直接覆盖
-				}
-				FileOutputStream fos = new FileOutputStream(file,true);
-				OutputStreamWriter osw = new OutputStreamWriter(fos);
-				BufferedWriter bw = new BufferedWriter(osw);
-				bw.newLine(); //换行
-				bw.write(queryString); //存储
-				bw.flush();
-				bw.close();
-				osw.close();
-				fos.close();
-			}catch (FileNotFoundException e1) {
-				e1.printStackTrace();
-			} catch (IOException e2) {
-				e2.printStackTrace();
-			}
-		}
+		history1 = queryString; //原句子
 
 
 		/**
@@ -165,6 +144,7 @@ public class ModelProcess {
 
 		String strPatt = queryClassify(abstr);
 
+		//history2 = strPatt; //模板句式
 		System.out.println("句子套用模板结果：" + strPatt); // ntc n 有哪些
 		System.out.println("========问题模板匹配结束========");
 		System.out.println(" ");
@@ -193,6 +173,8 @@ public class ModelProcess {
 		process.append("由问句分析，生成的最终查询集合：" + resultList + "<br><br>");
 
 		resultList.add(process.toString());
+		process.setLength(0); //清空
+
 		return resultList; //模板序号 分词1 分词2 分词3 ... 分词n 处理过程
 	}
 
@@ -264,11 +246,11 @@ public class ModelProcess {
 
 		System.out.println("关键字与其词性的map键值对哈希表 abstractMap 已生成");
 		System.out.println(" ");
-		process.append("关键字与其词性的map键值对哈希表已生成" + "<br><br>");
+		//process.append("关键字与其词性的map键值对哈希表已生成" + "<br><br>");
 
 		System.out.println("模板所需的词性替换、句子抽象化处理已完成");
 		System.out.println(" ");
-		process.append("模板所需的词性替换、句子抽象化处理已完成" + "<br><br>");
+		//process.append("模板所需的词性替换、句子抽象化处理已完成" + "<br><br>");
 
 		return abstractQuery;
 	}
@@ -309,10 +291,10 @@ public class ModelProcess {
 		System.out.println("========句子还原结束========");
 		System.out.println(" ");
 
-		process.append("========开始句子还原========" + "<br>"
-				+ "从abstractMap中获取词性集合" + "<br>"
-				+ "替换句子模板中的抽象词性为 具体问句中的单词" + "<br>"
-				+ "========句子还原结束========"  + "<br><br>");
+//		process.append("========开始句子还原========" + "<br>"
+//				+ "从abstractMap中获取词性集合" + "<br>"
+//				+ "替换句子模板中的抽象词性为 具体问句中的单词" + "<br>"
+//				+ "========句子还原结束========"  + "<br><br>");
 
 		return extendedQuery;
 	}
@@ -673,16 +655,16 @@ public class ModelProcess {
 		double[] testArray = sentenceToArrays(sentence);
 		System.out.println("用户问句——词向量生成完毕");
 		System.out.println("用户问句——调试输出——用户问句的向量：" + Arrays.toString(testArray));
-		process.append("用户问句——开始生成向量" + "<br>"
-						+ "用户问句——词向量生成完毕" + "<br>"
-						+ "用户问句——调试输出——用户问句的向量：" + Arrays.toString(testArray) + "<br>");
+//		process.append("用户问句——开始生成向量" + "<br>"
+//						+ "用户问句——词向量生成完毕" + "<br>"
+//						+ "用户问句——调试输出——用户问句的向量：" + Arrays.toString(testArray) + "<br>");
 
 		/**
 		 * 生成对应的稠密向量 v
 		 */
 		Vector v = Vectors.dense(testArray);
 		System.out.println("用户问句——生成的对应的稠密向量：" + v.toString());
-		process.append("用户问句——生成的对应的稠密向量：" + v.toString() + "<br>");
+		//process.append("用户问句——生成的对应的稠密向量：" + v.toString() + "<br>");
 
 		/**
 		 * 对数据进行预测predict
@@ -695,6 +677,42 @@ public class ModelProcess {
 		double index = nbModel.predict(v);
 		modelIndex = (int)index;
 		//System.out.println("预测匹配完成，模板序号为" + index);
+		history2 = questionsPattern.get(index);
+
+
+
+		/**
+		 * 问答历史记录
+		 * 将queryString存至txt文件新的一行
+		 * 原句子 模板序号 模板句式
+		 */
+		if(history1!="预加载" && history1!=""){
+			try {
+				File file = new File("D:\\_HhrWorkSpace\\Java\\SpringBoot-Neo4j-KBQA\\history.txt");
+				if(!file.exists()) {
+					file.createNewFile(); // 创建新文件,有同名的文件的话直接覆盖
+				}
+				FileOutputStream fos = new FileOutputStream(file,true);
+				OutputStreamWriter osw = new OutputStreamWriter(fos);
+				BufferedWriter bw = new BufferedWriter(osw);
+
+				bw.newLine(); //换行
+				bw.write(history1 + ","); //存储原句子
+				bw.write("" + index + ","); //存储模板序号
+				bw.write(history2 + ""); //存储模板句式
+
+				bw.flush();
+				bw.close();
+				osw.close();
+				fos.close();
+			}catch (FileNotFoundException e1) {
+				e1.printStackTrace();
+			} catch (IOException e2) {
+				e2.printStackTrace();
+			}
+		}
+
+
 
 		/**
 		 * 问题模板匹配概率输出
