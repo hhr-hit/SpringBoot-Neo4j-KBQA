@@ -288,13 +288,22 @@
 						//答案处理
 						var newLi = document.createElement('li'); //新建一个气泡-答案
 						if(obj.answer.indexOf("图片") >= 0) { //是详情问答
-							var start    = obj.answer.indexOf("图片") + 3; //查找图片地址 起始点
-							var end      = obj.answer.indexOf("jpg") + 2; //查找图片地址 终止点
-							var addr     = obj.answer.substr(start, end-start+1); //截取图片地址子串
-							var newStr = obj.answer.replace(addr, "<img src=\"" + addr + "\" width=\"200\" height=\"200\" />"); //显示图片
-							var lastStr  = newStr.replace("n5", "n7"); //采集的图片太小，换为大的版本
+							var start0  = obj.answer.indexOf("图片") + 3; //查找图片地址 起始点
+							var end0    = obj.answer.indexOf("jpg") + 2; //查找图片地址 终止点
+							var addr    = obj.answer.substr(start0, end0-start0+1); //截取图片地址子串
+							var newStr  = obj.answer.replace(addr, "<img src=\""
+									+ addr
+									+ "\" width=\"200\" height=\"200\" />"); //显示图片
+							var lastStr = newStr.replace("n5", "n7"); //采集的图片太小，换为大的版本
+
+							var start1  = lastStr.indexOf("购买") + 3; //查找链接地址 起始点
+							var htp    = lastStr.substr(start1, lastStr.length - 1); //截取地址子串
+							var JDstr  = lastStr.replace(htp, "<a href=\""
+												+ htp
+												+ "\" target=\"_blank\">点击前往京东购买此物品</a><br>"); //显示可点击的链接
+
 							//console.log(lastStr);
-							newLi.innerHTML = lastStr;//写入气泡
+							newLi.innerHTML = JDstr;//写入气泡
 						} else { //不是详情问答
 							newLi.innerHTML = obj.answer; //直接答案内容
 						}

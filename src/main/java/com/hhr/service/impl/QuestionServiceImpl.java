@@ -394,12 +394,15 @@ public class QuestionServiceImpl implements QuestionService {
 				if (all == null) {
 					answer = null;
 				} else {
-					answer = all.toString().replace("[", "").replace("]", "");
+					//answer = all.toString().replace("[", "").replace("]", "");
 					StringBuilder sb = new StringBuilder();
 					for(String x:all){
 						sb.append(x);
+						//System.out.println(x);
 						sb.append("<br>");
 					}
+					//加入购买推荐链接
+					sb.append("购买：https://search.jd.com/Search?keyword=" + name);
 					answer = sb.toString();
 				}
 				break;
