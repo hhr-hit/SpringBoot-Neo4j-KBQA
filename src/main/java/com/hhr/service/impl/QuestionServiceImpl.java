@@ -159,11 +159,11 @@ public class QuestionServiceImpl implements QuestionService {
 		process.append("从查询集合中提取问题分类序号：" + modelIndex + "<br><br>");
 
 		String answer = null;
-		String name = "";
-		String type = "";
-		String att  = "";
-		String mq  = "";
-
+		String name   = "";
+		String type   = "";
+		String att    = "";
+		String mq     = "";
+		Double m1, m2 = 0.0;
 
 		/**
 		 * 匹配问题模板序号
@@ -324,8 +324,8 @@ public class QuestionServiceImpl implements QuestionService {
 
 				Pattern p1 = Pattern.compile("冰箱");
 				for(String x:jiadians4){
-					Matcher m1 = p1.matcher(x);
-					if(m1.find()){
+					Matcher m01 = p1.matcher(x);
+					if(m01.find()){
 						sb4.append("冰箱");
 						sb4.append("<br>");
 						break;
@@ -333,8 +333,8 @@ public class QuestionServiceImpl implements QuestionService {
 				}
 				Pattern p2 = Pattern.compile("洗衣机");
 				for(String x:jiadians4){
-					Matcher m2 = p2.matcher(x);
-					if(m2.find()){
+					Matcher m02 = p2.matcher(x);
+					if(m02.find()){
 						sb4.append("洗衣机");
 						sb4.append("<br>");
 						break;
@@ -436,6 +436,93 @@ public class QuestionServiceImpl implements QuestionService {
 					answer = null;
 				} else {
 					answer = mqvalue.toString().replace("[", "").replace("]", "");
+				}
+				break;
+
+			case 7:
+				/**
+				 * 7 对应问题模板7   价格小于 m1 的 n 有哪些
+				 */
+				System.out.println(reStrings);
+				m1   = Double.parseDouble(reStrings.get(2));
+				type = reStrings.get(4);
+				System.out.println("从查询集合中获取参数：" + m1 + " " +  type);
+				System.out.println(" ");
+				System.out.println("查询Neo4j数据库：bolt://localhost:7687");
+				process.append("从查询集合中获取参数：" + m1 + "<br><br>"
+						+ type + "<br><br>"
+						+ "查询Neo4j数据库：bolt://localhost:7687" + "<br><br>");
+				type = ".*" + type + ".*"; //模糊查询
+				List<String> jiadians7 = qRepository.getNLP(m1, type);
+				if (jiadians7.size() == 0) {
+					answer = null;
+				} else {
+					answer = jiadians7.toString().replace("[", "").replace("]", "");
+					StringBuilder sb = new StringBuilder();
+					for(String x:jiadians7){
+						sb.append(x);
+						sb.append("<br>");
+					}
+					answer = sb.toString();
+				}
+				break;
+
+			case 8:
+				/**
+				 * 8 对应问题模板8   价格大于 m1 的 n 有哪些
+				 */
+				System.out.println(reStrings);
+				m1   = Double.parseDouble(reStrings.get(2));
+				type = reStrings.get(4);
+				System.out.println("从查询集合中获取参数：" + m1 + " " + type);
+				System.out.println(" ");
+				System.out.println("查询Neo4j数据库：bolt://localhost:7687");
+				process.append("从查询集合中获取参数：" + m1 + "<br><br>"
+						+ type + "<br><br>"
+						+ "查询Neo4j数据库：bolt://localhost:7687" + "<br><br>");
+				type = ".*" + type + ".*"; //模糊查询
+				List<String> jiadians8 = qRepository.getNHP(m1, type);
+				if (jiadians8.size() == 0) {
+					answer = null;
+				} else {
+					answer = jiadians8.toString().replace("[", "").replace("]", "");
+					StringBuilder sb = new StringBuilder();
+					for(String x:jiadians8){
+						sb.append(x);
+						sb.append("<br>");
+					}
+					answer = sb.toString();
+				}
+				break;
+
+			case 9:
+				/**
+				 * 9 对应问题模板9   价格在 m1 到 m2 的 n 有哪些
+				 */
+				System.out.println(reStrings);
+				m1   = Double.parseDouble(reStrings.get(2));
+				m2   = Double.parseDouble(reStrings.get(4));
+				type = reStrings.get(6);
+				System.out.println("从查询集合中获取参数：" + m1+ " " + m2 + " " + type);
+				System.out.println(" ");
+				System.out.println("查询Neo4j数据库：bolt://localhost:7687");
+				process.append("从查询集合中获取参数：" + m1 + "<br><br>"
+						+ m2 + "<br><br>"
+						+ type + "<br><br>"
+						+ "查询Neo4j数据库：bolt://localhost:7687" + "<br><br>");
+				type = ".*" + type + ".*"; //模糊查询
+				List<String> jiadians9 = qRepository.getNLH(m1, m2, type);
+				System.out.println(jiadians9);
+				if (jiadians9.size() == 0) {
+					answer = null;
+				} else {
+					answer = jiadians9.toString().replace("[", "").replace("]", "");
+					StringBuilder sb = new StringBuilder();
+					for(String x:jiadians9){
+						sb.append(x);
+						sb.append("<br>");
+					}
+					answer = sb.toString();
 				}
 				break;
 

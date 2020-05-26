@@ -138,7 +138,35 @@
 		window.onload = function() {
 			var process0 = "系统后台处理流程:<br>========加载问题模板========<br>模板文件：D:/_HhrWorkSpace/Java/SpringBoot-Neo4j-KBQA/myHanLP/data/question/question_classification.txt<br>按行读入文件，以 : 分割<br>构造 模板-序号 的哈希表 questionsPattern<br>========加载问题模板========<br> <br>========加载词汇表=======<br>词汇表位置：D:/_HhrWorkSpace/Java/SpringBoot-Neo4j-KBQA/myHanLP/data/question/vocabulary.txt<br>构造单词-序号 哈希表<br>以 : 分割读取的文件字符数据流<br>========加载词汇表=======<br> <br>========加载问题训练集========<br>加载训练集0：某品牌的某类型家电<br>加载训练集1：某参数的某类型家电<br>加载训练集2：哪些厂家生产某种家电<br>加载训练集3：某家电的价格<br>加载训练集4：某品牌有哪些家电种类<br>加载训练集5：某家电的所有参数<br>加载训练集6：某家电的某个参数<br>========加载问题训练集========<br> <br>========朴素贝叶斯分类训练=====<br>转换训练集为RDD——弹性分布式数据集<br>Spark-NaiveBayes生成训练器，训练问题模板<br>========朴素贝叶斯分类训练=====<br><br>========加载自定义扩展词库===<br>HanLP分词字典根目录为：D:/_HhrWorkSpace/Java/SpringBoot-Neo4j-KBQA/myHanLP/data/dictionary<br>========加载自定义扩展词库===<br><br>";
 			var process1 = "";
-			
+
+			/**
+			 * 推荐问句
+			 */
+			var ul = document.getElementById('content'); //获取容器
+			var newLi = document.createElement('li'); //创建新的对话气泡-系统
+			newLi.innerHTML = "根据您的问答历史记录，为您推荐以下问题："; //显示
+			newLi.className = 'msgContent left';
+			ul.appendChild(newLi); //加入容器中
+			var div = document.createElement('div');//空白分割
+			div.style = 'clear:both';
+			ul.appendChild(div); //空白分割
+			//ajax方式，访问后台
+			ajax({
+				url : '/rest/hhr/question/history',
+				success : function(res) {
+					console.log(res);
+					var newLi = document.createElement('li'); //新建一行
+					newLi.innerHTML = res.substr(0, res.indexOf(",")); //推荐第一条
+					newLi.className = 'msgContent left';
+					ul.appendChild(newLi); //加入容器中
+					var div = document.createElement('div'); //新建一个对话气泡-系统回复
+					div.style = 'clear:both'; //空白分割
+					ul.appendChild(div); //加入容器中
+					//input.value = ''; //重置输入框
+					newLi.scrollIntoView(); //将元素滚动到可见位置
+				}
+			})
+
 			/**
 			 * 查看历史按钮
 			 */
@@ -377,9 +405,9 @@
 			<li class="msgContent left">
 				您好，自动问答系统为您服务，有什么家电销售方面的问题可以问我<br>（目前本系统构建知识图谱的原始数据来源于京东）
 			</li>
-			<li class="msgContent left">
-				根据您的问答历史记录，为您推荐以下问题：<br>海尔的冰箱有哪些？
-			</li>
+<!--			<li class="msgContent left">-->
+<!--				根据您的问答历史记录，为您推荐以下问题：<br>海尔的冰箱有哪些？-->
+<!--			</li>-->
 			<div style="clear: both"></div>
 		</ul>
 		<textarea id="msg_input" class="msgInput"></textarea>

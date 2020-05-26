@@ -80,5 +80,32 @@ public interface QRepository extends Neo4jRepository<jd_entity,Long> {
     @Query("match(m)-[r]->(n) where m.name=~{noj} and r.name=~{mq} return n.name")
     String getMcsByNoj(@Param("noj") String noj, @Param("mq") String mq);
 
+    /**
+     * 7 对应问题模板7   价格小于 m1 的 n 有哪些
+     * @param tm1 价格
+     * @param tn 家电类型
+     * @return 返回家电名称列表
+     */
+    @Query("match(m)-[r:价格]->(n) where toInteger(n.name)<{tm1} and m.name=~{tn} return distinct m.name")
+    List<String> getNLP(@Param("tm1") Double tm1, @Param("tn") String tn);
+
+    /**
+     * 8 对应问题模板8   价格大于 m1 的 n 有哪些
+     * @param tm1 价格
+     * @param tn 家电类型
+     * @return 返回家电名称列表
+     */
+    @Query("match(m)-[r:价格]->(n) where toInteger(n.name)>{tm1} and m.name=~{tn} return distinct m.name")
+    List<String> getNHP(@Param("tm1") Double tm1, @Param("tn") String tn);
+
+    /**
+     * 9 对应问题模板9   价格在 m1 到 m2 的 n 有哪些
+     * @param tm1 价格
+     * @param tm2 价格
+     * @param tn 家电类型
+     * @return 返回家电名称列表
+     */
+    @Query("match(m)-[r:价格]->(n) where toInteger(n.name)>1000 and toInteger(n.name)<2000 and m.name=~{tn} return distinct m.name")
+    List<String> getNLH(@Param("tm1") Double tm1, @Param("tm2") Double tm2, @Param("tn") String tn);
 
 }

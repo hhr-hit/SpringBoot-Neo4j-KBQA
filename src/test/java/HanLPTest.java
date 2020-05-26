@@ -18,6 +18,24 @@ import com.hankcs.hanlp.seg.common.Term;
 public class HanLPTest {
 
 	@Test
+	public void TestD() throws Exception{
+		String[] questionArr = new String[] {"价格大于2000的冰箱有哪些",
+											"价格小于三千大于一千的冰箱有哪些",
+											"价格在一千到两千的冰箱有哪些"};
+		try{
+			Segment segment = HanLP.newSegment();
+			for(String que: questionArr){
+				List<Term> seg = segment.seg(que);
+				for (Term term : seg)
+					System.out.println(term.toString());
+			}
+		}catch (Exception ex){
+			System.out.println(ex.getClass()+","+ex.getMessage());
+		}
+
+	}
+
+	@Test
 	public void TestA(){
 		String lineStr = "明天虽然会下雨，但是我还是会看周杰伦的演唱会。";
 		try{
@@ -49,11 +67,14 @@ public class HanLPTest {
 	
 	@Test
 	public void TestC() throws Exception{
-		ModelProcess query = new ModelProcess("D:/HanLP/data");
-		String[] questionArr = new String[] {"卧虎藏龙的分数是多少"};		
+		ModelProcess query = new ModelProcess("D:/_HhrWorkSpace/Java/SpringBoot-Neo4j-KBQA/myHanLP/data");
+		//String[] questionArr = new String[] {"价格小于1000的冰箱有哪些"};
+		String[] questionArr = new String[] {"价格大于1000的冰箱有哪些"};
+		//String[] questionArr = new String[] {"价格在1000到2000的冰箱有哪些"};
 		for(String que: questionArr){
-				ArrayList<String> question = query.analyQuery(que);
-				System.err.println(question);
+			ArrayList<String> reStrings = query.analyQuery(que);
+			reStrings.remove(reStrings.size() - 1); //删除处理流程
+			System.err.println(reStrings);
 		}
 	}
 	

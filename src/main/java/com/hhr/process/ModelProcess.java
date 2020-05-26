@@ -203,11 +203,11 @@ public class ModelProcess {
 		 * 整体输出就是 海尔/ntc
 		 * 根据Term的特性进行处理
 		 */
+		int mCount = 0; //m 数词词性这个 词语出现的频率
 		for (Term term : terms) {
 			String word = term.word; //获取单词的部分，以用于存入抽象化结果和哈希表，比如 海尔
 			//System.out.println(word); //调试
 			String termStr = term.toString(); //整个输出，比如 海尔/ntc
-
 			System.out.println(termStr); //分词结果输出
 			process.append(termStr + "<br>");
 
@@ -235,6 +235,14 @@ public class ModelProcess {
 			} else if (termStr.contains("mq")) { //mq 某参数
 				abstractQuery += "mq ";
 				abstractMap.put("mq", word);
+			} else if (termStr.contains("m") && mCount == 0) { //m 数词 m1
+				abstractQuery += "m1 ";
+				abstractMap.put("m1", word);
+				mCount++;
+			} else if (termStr.contains("m") && mCount == 1) { //m 数词 第二个 m2
+				abstractQuery += "m2 ";
+				abstractMap.put("m2", word);
+				mCount++;
 			} else {
 				abstractQuery += word + " ";
 			}
@@ -564,6 +572,48 @@ public class ModelProcess {
 			double[] array = sentenceToArrays(sentence);
 			System.out.println(Arrays.toString(array));
 			LabeledPoint train_one = new LabeledPoint(6.0, Vectors.dense(array)); //index
+			train_list.add(train_one);
+		}
+
+		/**
+		 * 7 价格大于1000的冰箱
+		 */
+		System.out.println("加载训练集7：某类型家电价格【小于】");
+		String nLP = loadFile("question/【7】某类型家电价格【小于】.txt");
+		sentences = nLP.split("`"); //根据自定义换行标记分割
+		System.out.println("调试输出——问题模板7对应的向量：");
+		for (String sentence : sentences) {
+			double[] array = sentenceToArrays(sentence);
+			System.out.println(Arrays.toString(array));
+			LabeledPoint train_one = new LabeledPoint(7.0, Vectors.dense(array)); //index
+			train_list.add(train_one);
+		}
+
+		/**
+		 * 8 价格小于1000的冰箱
+		 */
+		System.out.println("加载训练集8：某类型家电价格【大于】");
+		String nHP = loadFile("question/【8】某类型家电价格【大于】.txt");
+		sentences = nHP.split("`"); //根据自定义换行标记分割
+		System.out.println("调试输出——问题模板8对应的向量：");
+		for (String sentence : sentences) {
+			double[] array = sentenceToArrays(sentence);
+			System.out.println(Arrays.toString(array));
+			LabeledPoint train_one = new LabeledPoint(8.0, Vectors.dense(array)); //index
+			train_list.add(train_one);
+		}
+
+		/**
+		 * 9 价格在1000到2000的冰箱
+		 */
+		System.out.println("加载训练集9：某类型家电价格【某区间】");
+		String nLH = loadFile("question/【9】某类型家电价格【某区间】.txt");
+		sentences = nLH.split("`"); //根据自定义换行标记分割
+		System.out.println("调试输出——问题模板9对应的向量：");
+		for (String sentence : sentences) {
+			double[] array = sentenceToArrays(sentence);
+			System.out.println(Arrays.toString(array));
+			LabeledPoint train_one = new LabeledPoint(9.0, Vectors.dense(array)); //index
 			train_list.add(train_one);
 		}
 

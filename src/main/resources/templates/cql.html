@@ -145,6 +145,27 @@ position: fixed;
 </style>
 <script type="text/javascript">
 	window.onload = function() {
+
+		/**
+		 * 生成语句按钮
+		 * 自助生成正确语句
+		 */
+		document.getElementById('autobtn').onclick = function() {
+			autoMsg(); //点击按钮，发送消息
+		}
+
+		/**
+		 * 生成语句按钮
+		 * 消息发送与界面显示
+		 */
+		function autoMsg() {
+			var inputntc = document.getElementById('ntc_input').value; //查找缓存，获取输入
+			var inputn   = document.getElementById('n_input').value; //查找缓存，获取输入
+			var autocql  = "match(m)-[r:品牌]->(n) where n.name=~\"" + ".*" + inputntc +".*" +"\""
+							+ "and m.name =~\"" + ".*" + inputn +".*" + "\"" + " return distinct m.name"
+			document.getElementById('cql_input').innerText = autocql; //结果区域
+		}
+
 		/**
 		 * 查询按钮
 		 * 自助查询数据库
@@ -232,6 +253,15 @@ position: fixed;
 			<div style="font-size:18px;position:absolute;left:15px;top:425px;">输入Cypher语句，查询Neo4j数据库：</div>
 			<textarea id="cql_input" class="cqlInput"></textarea>
 			<button id="cqlbtn" class="cqlbtn">查询</button>
+		</div>
+	</div>
+	<div style="position:absolute;left:1140px;top:15px;background-color:transparent;height:250px;width:150px;" id="thecql">
+		<div style="color:white;border:1px solid steelblue;float:left;background-color:transparent;height:250px;width:150px;font-size:16px">
+			<div style="font-size:18px;position:absolute;left:15px;top:25px;">输入品牌名：</div>
+			<textarea id="ntc_input" style="position:absolute;top:45px;left:15px;display: block;width: 120px;height: 30px;font-size:18px;margin: 10px auto;"></textarea>
+			<div style="font-size:18px;position:absolute;left:15px;top:100px;">输入家电类型：</div>
+			<textarea id="n_input" style="position:absolute;top:125px;left:15px;display: block;width: 120px;height: 30px;font-size:18px;margin: 10px auto;"></textarea>
+			<button id="autobtn" style="position: absolute;width:100px;height:29px;bottom:5px;right:10px;font-size:18px;background-color:#555555;color:white;">生成语句</button>
 		</div>
 	</div>
 </body>
