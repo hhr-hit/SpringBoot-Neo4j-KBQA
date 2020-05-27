@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller //必须这个注解
-@RequestMapping("/src/main/resources/templates")
+@RequestMapping("/rest/hhr/pages")
 public class ToPageController {
     /**
      * 跳转页面

@@ -113,8 +113,8 @@ public class QuestionController {
         Process p = null;
         // 要用/做路径分隔符，而不是\
         // 需要注意捕获io异常
-        p = rn.exec("cmd.exe /k start D:/_HhrWorkSpace/Java/SpringBoot-Neo4j-KBQA/createNeo4j.bat");
-        //p = rn.exec("cmd.exe /k start D:/_HhrWorkSpace/Java/SpringBoot-Neo4j-KBQA/test01.bat");
+        p = rn.exec("cmd.exe /k start createNeo4j.bat");
+        //p = rn.exec("cmd.exe /k start test01.bat");
     }
 
 	/**
@@ -126,7 +126,7 @@ public class QuestionController {
 	 */
 	@RequestMapping("/history")
 	public String seeHistory() throws Exception {
-		File file = new File("D:\\_HhrWorkSpace\\Java\\SpringBoot-Neo4j-KBQA\\history.txt");
+		File file = new File("history.txt");
 		if(!file.exists()){
 			//throw new RuntimeException("要读取的文件不存在");
 			return null;

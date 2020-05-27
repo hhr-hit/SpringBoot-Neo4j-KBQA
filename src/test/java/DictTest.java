@@ -10,7 +10,7 @@ import java.util.List;
 public class DictTest {
 
     //@Value("${HanLP.CustomDictionary.path.mcsDict}")
-    private String mcsDictPath = "D:/_HhrWorkSpace/Java/SpringBoot-Neo4j-KBQA/myHanLP/data/dictionary/custom/mqDict.txt";
+    private String mcsDictPath = "myHanLP/data/dictionary/custom/mqDict.txt";
 
     public void addCustomDictionary(BufferedReader br, int type) {
         String word;
@@ -101,6 +101,7 @@ public class DictTest {
 
             try {
                 br = new BufferedReader(new FileReader(file));
+                System.out.println("文件读取成功" + br);
                 addCustomDictionary(br, 0);
             } catch (FileNotFoundException e1) {
                 e1.printStackTrace();

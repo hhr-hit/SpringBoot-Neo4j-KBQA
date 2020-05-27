@@ -58,7 +58,7 @@ public class ModelProcess {
 	 * 指定 问题question 及 字典的txt模板 所在的根目录
 	 * 需增加问题模板训练集txt文件
 	 */
-	String rootDirPath = "D:/_HhrWorkSpace/Java/SpringBoot-Neo4j-KBQA/myHanLP/data";
+	String rootDirPath = "myHanLP/data";
 
 	/**
 	 * 分类模板索引值
@@ -738,7 +738,7 @@ public class ModelProcess {
 		 */
 		if(history1!="预加载" && history1!=""){
 			try {
-				File file = new File("D:\\_HhrWorkSpace\\Java\\SpringBoot-Neo4j-KBQA\\history.txt");
+				File file = new File("history.txt");
 				if(!file.exists()) {
 					file.createNewFile(); // 创建新文件,有同名的文件的话直接覆盖
 				}

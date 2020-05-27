@@ -67,7 +67,7 @@ public class HanLPTest {
 	
 	@Test
 	public void TestC() throws Exception{
-		ModelProcess query = new ModelProcess("D:/_HhrWorkSpace/Java/SpringBoot-Neo4j-KBQA/myHanLP/data");
+		ModelProcess query = new ModelProcess("myHanLP/data");
 		//String[] questionArr = new String[] {"价格小于1000的冰箱有哪些"};
 		String[] questionArr = new String[] {"价格大于1000的冰箱有哪些"};
 		//String[] questionArr = new String[] {"价格在1000到2000的冰箱有哪些"};
