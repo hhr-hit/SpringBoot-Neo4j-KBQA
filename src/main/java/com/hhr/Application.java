@@ -20,6 +20,10 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 public class Application extends SpringBootServletInitializer {
 
+	/**
+	 * SpringBoot的启动类
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
 
@@ -27,11 +31,22 @@ public class Application extends SpringBootServletInitializer {
 		//System.setProperty("tomcat.util.http.parser.HttpParser.requestTargetAllow","|");
 	}
 
+	/**
+	 * 打包成war
+	 * 需要一个ServletInitializer类
+	 * @param application
+	 * @return
+	 */
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
 		return application.sources(Application.class);
 	}
 
+	/**
+	 * 配置修改
+	 * 请求路径容纳特殊字符
+	 * @return
+	 */
 	@Bean
 	public TomcatServletWebServerFactory webServerFactory() {
 		TomcatServletWebServerFactory factory = new TomcatServletWebServerFactory();
