@@ -136,7 +136,20 @@
 	</style>
 	<script type="text/javascript">
 		window.onload = function() {
-			var process0 = "系统后台处理流程:<br>========加载问题模板========<br>模板文件：D:/_HhrWorkSpace/Java/SpringBoot-Neo4j-KBQA/myHanLP/data/question/question_classification.txt<br>按行读入文件，以 : 分割<br>构造 模板-序号 的哈希表 questionsPattern<br>========加载问题模板========<br> <br>========加载词汇表=======<br>词汇表位置：D:/_HhrWorkSpace/Java/SpringBoot-Neo4j-KBQA/myHanLP/data/question/vocabulary.txt<br>构造单词-序号 哈希表<br>以 : 分割读取的文件字符数据流<br>========加载词汇表=======<br> <br>========加载问题训练集========<br>加载训练集0：某品牌的某类型家电<br>加载训练集1：某参数的某类型家电<br>加载训练集2：哪些厂家生产某种家电<br>加载训练集3：某家电的价格<br>加载训练集4：某品牌有哪些家电种类<br>加载训练集5：某家电的所有参数<br>加载训练集6：某家电的某个参数<br>========加载问题训练集========<br> <br>========朴素贝叶斯分类训练=====<br>转换训练集为RDD——弹性分布式数据集<br>Spark-NaiveBayes生成训练器，训练问题模板<br>========朴素贝叶斯分类训练=====<br><br>========加载自定义扩展词库===<br>HanLP分词字典根目录为：D:/_HhrWorkSpace/Java/SpringBoot-Neo4j-KBQA/myHanLP/data/dictionary<br>========加载自定义扩展词库===<br><br>";
+			var process0 = "系统后台处理流程:<br>========加载问题模板========<br>" +
+					"D:/_HhrWorkSpace/Java/SpringBoot-Neo4j-KBQA/myHanLP/data/question/question_classification.txt" +
+					"<br>========加载问题模板========<br><br>========加载词汇表=======" +
+					"<br>D:/_HhrWorkSpace/Java/SpringBoot-Neo4j-KBQA/myHanLP/data/question/vocabulary.txt" +
+					"<br>========加载词汇表=======<br><br>========加载自定义扩展词库===" +
+					"<br>D:/_HhrWorkSpace/Java/SpringBoot-Neo4j-KBQA/myHanLP/data/dictionary" +
+					"<br>========加载自定义扩展词库===<br><br>========加载问题训练集========" +
+					"<br>加载训练集0：某品牌的某类型家电<br>加载训练集1：某参数的某类型家电<br>加载训练集2：哪些厂家生产某种家电" +
+					"<br>加载训练集3：某家电的价格<br>加载训练集4：某品牌有哪些家电种类" +
+					"<br>加载训练集5：某家电的所有参数<br>加载训练集6：某家电的某个参数" +
+					"<br>加载训练集7：某类型家电价格【小于】<br>加载训练集8：某类型家电价格【大于】" +
+					"<br>加载训练集9：某类型家电价格【某区间】<br>========加载问题训练集========<br>" +
+					"<br>========朴素贝叶斯分类器=====<br>转换训练集为RDD——弹性分布式数据集" +
+					"<br>Spark-NaiveBayes生成训练器，训练问题模板<br>========朴素贝叶斯分类器=====<br><br><br>";
 			var process1 = "";
 
 			/**
@@ -260,6 +273,7 @@
 				var div = document.createElement('div');//空白分割
 				div.style = 'clear:both';
 				ul.appendChild(div); //空白分割
+				newLi.scrollIntoView(); //将元素滚动到可见位置 //消息气泡第一行
 			}
 
 			/**

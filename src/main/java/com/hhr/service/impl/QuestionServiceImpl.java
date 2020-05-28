@@ -533,7 +533,7 @@ public class QuestionServiceImpl implements QuestionService {
 		System.out.println(" ");
 		System.out.println("查询结束，结果为：");
 		System.out.println(answer);
-		process.append("查询结束，结果为：" + "<br>" + answer + "<br><br>"); //处理结束
+		//process.append("查询结束，结果为：" + "<br>" + answer + "<br><br>"); //处理结束
 
 		/**
 		 * 生成答案
@@ -546,7 +546,7 @@ public class QuestionServiceImpl implements QuestionService {
 			res.add("sorry,我没有找到你要的答案");
 		}
 		res.add(process.toString()); //加入处理过程
-		process.setLength(0); //清空
+		process.setLength(0); //清空sb
 
 		return res; //答案 //处理过程
 	}

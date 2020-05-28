@@ -150,20 +150,21 @@ position: fixed;
 		 * 生成语句按钮
 		 * 自助生成正确语句
 		 */
-		document.getElementById('autobtn').onclick = function() {
-			autoMsg(); //点击按钮，发送消息
+		document.getElementById('autobtn1').onclick = function() { //ntc n
+			//autoMsg(); //点击按钮，发送消息
+			var inputntc1 = document.getElementById('ntc_input1').value; //查找缓存，获取输入
+			var inputn1   = document.getElementById('n_input1').value; //查找缓存，获取输入
+			var autocql1  = "match(m)-[r:品牌]->(n) where n.name=~\"" + ".*" + inputntc1 +".*" +"\""
+					+ "and m.name =~\"" + ".*" + inputn1 +".*" + "\"" + " return distinct m.name"
+			document.getElementById('cql_input').innerHTML = autocql1; //结果区域
 		}
-
-		/**
-		 * 生成语句按钮
-		 * 消息发送与界面显示
-		 */
-		function autoMsg() {
-			var inputntc = document.getElementById('ntc_input').value; //查找缓存，获取输入
-			var inputn   = document.getElementById('n_input').value; //查找缓存，获取输入
-			var autocql  = "match(m)-[r:品牌]->(n) where n.name=~\"" + ".*" + inputntc +".*" +"\""
-							+ "and m.name =~\"" + ".*" + inputn +".*" + "\"" + " return distinct m.name"
-			document.getElementById('cql_input').innerText = autocql; //结果区域
+		document.getElementById('autobtn2').onclick = function() { //att n
+			//autoMsg(); //点击按钮，发送消息
+			var inputatt2 = document.getElementById('att_input2').value; //查找缓存，获取输入
+			var inputn2   = document.getElementById('n_input2').value; //查找缓存，获取输入
+			var autocql2  = "match(m)-[r]->(n) where n.name=~\"" + ".*" + inputatt2 +".*" +"\""
+					+ "and m.name =~\"" + ".*" + inputn2 +".*" + "\"" + " return distinct m.name"
+			document.getElementById('cql_input').innerHTML = autocql2; //结果区域
 		}
 
 		/**
@@ -258,10 +259,19 @@ position: fixed;
 	<div style="position:absolute;left:1140px;top:15px;background-color:transparent;height:250px;width:150px;" id="thecql">
 		<div style="color:white;border:1px solid steelblue;float:left;background-color:transparent;height:250px;width:150px;font-size:16px">
 			<div style="font-size:18px;position:absolute;left:15px;top:25px;">输入品牌名：</div>
-			<textarea id="ntc_input" style="position:absolute;top:45px;left:15px;display: block;width: 120px;height: 30px;font-size:18px;margin: 10px auto;"></textarea>
+			<textarea id="ntc_input1" style="position:absolute;top:45px;left:15px;display: block;width: 120px;height: 30px;font-size:18px;margin: 10px auto;"></textarea>
 			<div style="font-size:18px;position:absolute;left:15px;top:100px;">输入家电类型：</div>
-			<textarea id="n_input" style="position:absolute;top:125px;left:15px;display: block;width: 120px;height: 30px;font-size:18px;margin: 10px auto;"></textarea>
-			<button id="autobtn" style="position: absolute;width:100px;height:29px;bottom:5px;right:10px;font-size:18px;background-color:#555555;color:white;">生成语句</button>
+			<textarea id="n_input1" style="position:absolute;top:125px;left:15px;display: block;width: 120px;height: 30px;font-size:18px;margin: 10px auto;"></textarea>
+			<button id="autobtn1" style="position: absolute;width:100px;height:29px;bottom:5px;right:10px;font-size:18px;background-color:#555555;color:white;">生成语句</button>
+		</div>
+	</div>
+	<div style="position:absolute;left:1140px;top:310px;background-color:transparent;height:250px;width:150px;" id="thecql">
+		<div style="color:white;border:1px solid steelblue;float:left;background-color:transparent;height:250px;width:150px;font-size:16px">
+			<div style="font-size:18px;position:absolute;left:15px;top:25px;">输入参数值：</div>
+			<textarea id="att_input2" style="position:absolute;top:45px;left:15px;display: block;width: 120px;height: 30px;font-size:18px;margin: 10px auto;"></textarea>
+			<div style="font-size:18px;position:absolute;left:15px;top:100px;">输入家电类型：</div>
+			<textarea id="n_input2" style="position:absolute;top:125px;left:15px;display: block;width: 120px;height: 30px;font-size:18px;margin: 10px auto;"></textarea>
+			<button id="autobtn2" style="position: absolute;width:100px;height:29px;bottom:5px;right:10px;font-size:18px;background-color:#555555;color:white;">生成语句</button>
 		</div>
 	</div>
 </body>

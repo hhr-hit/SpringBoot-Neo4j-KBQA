@@ -98,7 +98,7 @@ public class QuestionController {
 		session.close();
 		driver.close();
 
-		return sb.toString();
+		return sb.toString().replace("\"", "");
 	}
 
 	/**
@@ -242,13 +242,14 @@ public class QuestionController {
 				aar_index = i;
 			}
 		}
-		System.out.println("出现次数最多的模板： "+aar_index);
-		System.out.println("出现次数： "+aar_Max);
+		System.out.println("出现次数最多的模板：" + aar_index);
+		System.out.println("出现次数：" + aar_Max);
 
 		max = aar_index;
 		for (int i=0; i<k; ++i) { //匹配
 			if(qs[i][0].equals(max+".0")){ //是出现最多的
 				result = qs[i][1]; //将问句内容返回
+                System.out.println("推荐问句：" + result);
 				break;
 			}
 		} //获得出现最多的问句内容
