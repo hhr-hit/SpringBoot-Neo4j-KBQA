@@ -140,7 +140,9 @@
 			var process1 = "";
 
 			/**
-			 * 推荐问句
+			 * 启动时
+			 * 发送命令让后台将问答历史排序
+			 * 读取历史，推荐问句
 			 */
 			var ul = document.getElementById('content'); //获取容器
 			var newLi = document.createElement('li'); //创建新的对话气泡-系统
@@ -152,11 +154,11 @@
 			ul.appendChild(div); //空白分割
 			//ajax方式，访问后台
 			ajax({
-				url : '/rest/hhr/question/history',
+				url : '/rest/hhr/question/recommend',
 				success : function(res) {
 					console.log(res);
 					var newLi = document.createElement('li'); //新建一行
-					newLi.innerHTML = res.substr(0, res.indexOf(",")); //推荐第一条
+					newLi.innerHTML = res; //推荐出现最多的模板类型的第一条问句
 					newLi.className = 'msgContent left';
 					ul.appendChild(newLi); //加入容器中
 					var div = document.createElement('div'); //新建一个对话气泡-系统回复

@@ -735,21 +735,22 @@ public class ModelProcess {
 		 * 问答历史记录
 		 * 将queryString存至txt文件新的一行
 		 * 原句子 模板序号 模板句式
+		 * 每次写入时，对文件内容排序
 		 */
 		if(history1!="预加载" && history1!=""){
 			try {
-				File file = new File("history.txt");
-				if(!file.exists()) {
-					file.createNewFile(); // 创建新文件,有同名的文件的话直接覆盖
+				File filew = new File("history.txt"); //写入
+				if(!filew.exists()) {
+					filew.createNewFile(); // 创建新文件,有同名的文件的话直接覆盖
 				}
-				FileOutputStream fos = new FileOutputStream(file,true);
+				FileOutputStream fos = new FileOutputStream(filew,true);
 				OutputStreamWriter osw = new OutputStreamWriter(fos);
 				BufferedWriter bw = new BufferedWriter(osw);
 
 				bw.newLine(); //换行
-				bw.write(history1 + ","); //存储原句子
-				bw.write("" + index + ","); //存储模板序号
-				bw.write(history2 + ""); //存储模板句式
+				bw.write(index    + ","); //存储模板序号
+				bw.write(history2 + ","); //存储模板句式
+				bw.write(history1 + "");  //存储原句子
 
 				bw.flush();
 				bw.close();
