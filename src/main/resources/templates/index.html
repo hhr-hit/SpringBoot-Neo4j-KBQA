@@ -32,9 +32,15 @@
 			})
 		}
 		/**
-		* ajax
-		* XMLHTTP通讯方式
-		*/
+		 * 封装ajax，自定义一套ajax方法
+		 * XMLHTTP，通讯方式get
+		 * 在其他地方，使用
+		 * ajax({
+		 * 	url:
+		 * 	success:
+		 * })
+		 * 来进行通信
+		 */
 		function ajax(obj) {
 			var xhr = null;
 			if (window.ActiveXObject) {
